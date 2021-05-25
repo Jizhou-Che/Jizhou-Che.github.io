@@ -1,3 +1,3 @@
 window.onload = function() {
-	alert("I look stupid.");
+	alert("Site under renovations.");
 }
