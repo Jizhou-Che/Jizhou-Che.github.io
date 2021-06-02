@@ -46,11 +46,11 @@ span {
 }
 
 .content {
-	width: 80%;
+	width: 90%;
 	height: 800px;
 	padding: 50px;
-	left: 10%;
-	right: 10%;
+	left: 5%;
+	right: 5%;
 	top: 100%;
 	border: solid 10px white;
 	position: fixed;
@@ -76,6 +76,7 @@ span {
 .content_cell {
 	height: 100px;
 	margin-top: 30px;
+	opacity: 0;
 	background-color: yellow;
 }
 
