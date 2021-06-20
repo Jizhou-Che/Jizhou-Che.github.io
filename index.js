@@ -46,6 +46,10 @@ window.onload = function() {
 			animate_setAnimationDirection(animationDic, "block_blue_hide", 1);
 		}
 	}
+	
+	// Test game.
+	let renovationsText = document.querySelector("#renovations_text");
+	renovationsText.onclick = loadGame;
 }
 
 // Test animation.
@@ -103,4 +107,110 @@ function renderContent(contentScrollDic, scroll, scrollDirection, animationDic) 
 			}
 		}
 	});
+}
+
+function loadGame() {
+	let gameWindow = document.createElement("div");
+	gameWindow.setAttribute("id", "game_window");
+	gameWindow.style.width = "100%";
+	gameWindow.style.height = "100%";
+	gameWindow.style.top = "0px";
+	gameWindow.style.backgroundColor = "gray";
+	gameWindow.style.position = "fixed";
+	document.body.appendChild(gameWindow);
+	
+	let gameInstructionsHeight = 50;
+	let gameMinWidth = 800;
+	let gameMinHeight = 500;
+	if (gameWindow.clientWidth < gameMinWidth || gameWindow.clientHeight < gameMinHeight + gameInstructionsHeight) {
+		let gameInstruction1 = document.createElement("span");
+		gameInstruction1.innerHTML = "<pre>You found something, but your window is too small to display it.</pre>";
+		let gameInstruction2 = document.createElement("span");
+		gameInstruction2.innerHTML = "<pre>Press ESC to quit.</pre>";
+		gameWindow.appendChild(gameInstruction1);
+		gameWindow.appendChild(gameInstruction2);
+		document.addEventListener("keyup", gameKeyListenerError);
+	} else {
+		// Display game instructions.
+		let gameInstruction = document.createElement("span");
+		gameInstruction.innerHTML = "<pre>ESC: Quit;   R: Restart;   Z: Jump and Double Jump;   Left and Right Arrows: Move.</pre>";
+		gameWindow.appendChild(gameInstruction);
+		
+		// Display game canvas.
+		let gameBackground = document.createElement("div");
+		let gameHorizontalScale = Math.floor(gameWindow.clientWidth / (gameMinWidth / 2));
+		let gameVerticalScale = Math.floor((gameWindow.clientHeight -  gameInstructionsHeight) / (gameMinHeight / 2));
+		let gameScale = Math.min(gameHorizontalScale, gameVerticalScale);
+		gameBackground.style.width = (gameMinWidth / 2) * gameScale + "px";
+		gameBackground.style.height = (gameMinHeight / 2) * gameScale + "px";
+		gameBackground.style.margin = "auto";
+		gameBackground.style.backgroundColor = "black";
+		gameWindow.appendChild(gameBackground);
+		
+		// Test keys.
+		let gameKeyTest = document.createElement("span");
+		gameKeyTest.setAttribute("id", "game_key_test");
+		gameWindow.appendChild(gameKeyTest);
+		
+		// Set key event listeners.
+		// Key status for "w", "a" and "d" respectively.
+		let gameKeys = [0, 0, 0];
+		document.addEventListener("keydown", function gameKeyListenerDown(event) {
+			gameKeyHandlerDown(event, gameKeys, gameKeyListenerDown);
+		});
+		document.addEventListener("keyup", function gameKeyListenerUp(event) {
+			gameKeyHandlerUp(event, gameKeys, gameKeyListenerUp);
+		});
+	}
+	// TODO: Use cookies to remember game state.
+}
+
+function gameKeyListenerError(event) {
+	if (event.key === "Escape") {
+		document.removeEventListener("keyup", gameKeyListenerError);
+		let gameWindow = document.querySelector("#game_window");
+		gameWindow.parentNode.removeChild(gameWindow);
+	}
+}
+
+function gameKeyHandlerDown(event, gameKeys, gameKeyListenerDown) {
+	switch (event.key) {
+		case "Escape":
+			document.removeEventListener("keydown", gameKeyListenerDown);
+			return;
+		case "w":
+			gameKeys[0] = 1;
+			break;
+		case "a":
+			gameKeys[1] = 1;
+			break;
+		case "d":
+			gameKeys[2] = 1;
+			break;
+	}
+	
+	let gameKeyTest = document.querySelector("#game_key_test");
+	gameKeyTest.innerHTML = gameKeys.toString();
+}
+
+function gameKeyHandlerUp(event, gameKeys, gameKeyListenerUp) {
+	switch (event.key) {
+		case "Escape":
+			document.removeEventListener("keyup", gameKeyListenerUp);
+			let gameWindow = document.querySelector("#game_window");
+			gameWindow.parentNode.removeChild(gameWindow);
+			return;
+		case "w":
+			gameKeys[0] = 0;
+			break;
+		case "a":
+			gameKeys[1] = 0;
+			break;
+		case "d":
+			gameKeys[2] = 0;
+			break;
+	}
+	
+	let gameKeyTest = document.querySelector("#game_key_test");
+	gameKeyTest.innerHTML = gameKeys.toString();
 }
