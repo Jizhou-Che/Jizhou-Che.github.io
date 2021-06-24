@@ -120,9 +120,7 @@ function loadGame() {
 	document.body.appendChild(gameWindow);
 	
 	let gameInstructionsHeight = 50;
-	let gameMinWidth = 800;
-	let gameMinHeight = 500;
-	if (gameWindow.clientWidth < gameMinWidth || gameWindow.clientHeight < gameMinHeight + gameInstructionsHeight) {
+	if (gameWindow.clientWidth < gameConfig_minWidth || gameWindow.clientHeight < gameConfig_minHeight + gameInstructionsHeight) {
 		let gameInstruction1 = document.createElement("span");
 		gameInstruction1.innerHTML = "<pre>You found something, but your window is too small to display it.</pre>";
 		let gameInstruction2 = document.createElement("span");
@@ -133,19 +131,41 @@ function loadGame() {
 	} else {
 		// Display game instructions.
 		let gameInstruction = document.createElement("span");
-		gameInstruction.innerHTML = "<pre>ESC: Quit;   R: Restart;   Z: Jump and Double Jump;   Left and Right Arrows: Move.</pre>";
+		gameInstruction.innerHTML = "<pre>ESC: Quit;   R: Restart;   Z: Jump and Double Jump;   , and .: Move.</pre>";
 		gameWindow.appendChild(gameInstruction);
 		
 		// Display game canvas.
-		let gameBackground = document.createElement("div");
-		let gameHorizontalScale = Math.floor(gameWindow.clientWidth / (gameMinWidth / 2));
-		let gameVerticalScale = Math.floor((gameWindow.clientHeight -  gameInstructionsHeight) / (gameMinHeight / 2));
+		let gameHorizontalScale = Math.floor(gameWindow.clientWidth / (gameConfig_minWidth / 2));
+		let gameVerticalScale = Math.floor((gameWindow.clientHeight -  gameInstructionsHeight) / (gameConfig_minHeight / 2));
 		let gameScale = Math.min(gameHorizontalScale, gameVerticalScale);
-		gameBackground.style.width = (gameMinWidth / 2) * gameScale + "px";
-		gameBackground.style.height = (gameMinHeight / 2) * gameScale + "px";
+		let gameWidth = (gameConfig_minWidth / 2) * gameScale;
+		let gameHeight = (gameConfig_minHeight / 2) * gameScale;
+		// Game background.
+		let gameBackground = document.createElement("div");
+		gameBackground.style.width = gameWidth + "px";
+		gameBackground.style.height = gameHeight + "px";
+		gameBackground.style.position = "relative";
 		gameBackground.style.margin = "auto";
 		gameBackground.style.backgroundColor = "black";
 		gameWindow.appendChild(gameBackground);
+		// Game canvas for blocks.
+		let gameCanvasBlocks = document.createElement("canvas");
+		gameCanvasBlocks.setAttribute("width", gameWidth.toString());
+		gameCanvasBlocks.setAttribute("height", gameHeight.toString());
+		gameCanvasBlocks.style.position = "absolute";
+		gameCanvasBlocks.style.zIndex = "1";
+		gameCanvasBlocks.style.top = "0px";
+		gameCanvasBlocks.style.left = "0px";
+		gameBackground.appendChild(gameCanvasBlocks);
+		// Game canvas for Chara.
+		let gameCanvasChara = document.createElement("canvas");
+		gameCanvasChara.setAttribute("width", gameWidth.toString());
+		gameCanvasChara.setAttribute("height", gameHeight.toString());
+		gameCanvasChara.style.position = "absolute";
+		gameCanvasChara.style.zIndex = "2";
+		gameCanvasChara.style.top = "0px";
+		gameCanvasChara.style.left = "0px";
+		gameBackground.appendChild(gameCanvasChara);
 		
 		// Test keys.
 		let gameKeyTest = document.createElement("span");
@@ -154,13 +174,17 @@ function loadGame() {
 		
 		// Set key event listeners.
 		// Key status for "w", "a" and "d" respectively.
-		let gameKeys = [0, 0, 0];
+		let gameKeys = [false, false, false];
 		document.addEventListener("keydown", function gameKeyListenerDown(event) {
 			gameKeyHandlerDown(event, gameKeys, gameKeyListenerDown);
 		});
 		document.addEventListener("keyup", function gameKeyListenerUp(event) {
 			gameKeyHandlerUp(event, gameKeys, gameKeyListenerUp);
 		});
+		
+		// Start game.
+		graphics_resetBlocks(gameCanvasBlocks, game1_blocks);
+		physics_start(gameCanvasBlocks, gameCanvasChara, gameKeys);
 	}
 	// TODO: Use cookies to remember game state.
 }
@@ -178,14 +202,16 @@ function gameKeyHandlerDown(event, gameKeys, gameKeyListenerDown) {
 		case "Escape":
 			document.removeEventListener("keydown", gameKeyListenerDown);
 			return;
-		case "w":
-			gameKeys[0] = 1;
+		case "z":
+			gameKeys[0] = true;
 			break;
-		case "a":
-			gameKeys[1] = 1;
+		case ",":
+			gameKeys[1] = true;
+			gameKeys[2] = false;
 			break;
-		case "d":
-			gameKeys[2] = 1;
+		case ".":
+			gameKeys[2] = true;
+			gameKeys[1] = false;
 			break;
 	}
 	
@@ -200,14 +226,14 @@ function gameKeyHandlerUp(event, gameKeys, gameKeyListenerUp) {
 			let gameWindow = document.querySelector("#game_window");
 			gameWindow.parentNode.removeChild(gameWindow);
 			return;
-		case "w":
-			gameKeys[0] = 0;
+		case "z":
+			gameKeys[0] = false;
 			break;
-		case "a":
-			gameKeys[1] = 0;
+		case ",":
+			gameKeys[1] = false;
 			break;
-		case "d":
-			gameKeys[2] = 0;
+		case ".":
+			gameKeys[2] = false;
 			break;
 	}
 	
