@@ -39,10 +39,13 @@ function physics_start(gameCanvasBlocks, gameCanvasChara, gameKeys) {
 			}
 			
 			// Chara vertical movement.
+			if (gameKeys[0]) {
+				charaPositionNew[1] -= 2 * frameDiff;
+			}
 			
 			// Trigger check.
 			
-			// Collision correction.
+			// Collision detection.
 			let charaMovementX = charaPositionNew[0] - charaPositionOld[0];
 			let charaMovementY = charaPositionNew[1] - charaPositionOld[1];
 			if (charaMovementX != 0 || charaMovementY != 0) {
@@ -60,17 +63,35 @@ function physics_start(gameCanvasBlocks, gameCanvasChara, gameKeys) {
 						charaPositionTracker[0] += charaMovementUnitX;
 						charaPositionTracker[1] += charaMovementUnitY;
 					}
+					// Boundary tolerence.
+					let rangeX1 = Math.floor(charaPositionTracker[0]);
+					let rangeX2 = Math.ceil(charaPositionTracker[0] + charaSizeX);
+					if (charaMovementUnitX < 0) {
+						rangeX1 += 1;
+					}
 					if (charaMovementUnitX > 0) {
-						let charaRightCollision = blocksPixels.slice(Math.ceil(charaPositionTracker[1]), Math.floor(charaPositionTracker[1] + charaSizeY)).map(a => a[Math.floor(charaPositionTracker[0] + charaSizeX)]);
+						rangeX2 -= 1;
+					}
+					let rangeY1 = Math.floor(charaPositionTracker[1]);
+					let rangeY2 = Math.ceil(charaPositionTracker[1] + charaSizeY);
+					if (charaMovementUnitY < 0) {
+						rangeY1 += 1;
+					}
+					if (charaMovementUnitY > 0) {
+						rangeY2 -= 1;
+					}
+					// Collision correction.
+					if (charaMovementUnitX > 0) {
+						let charaRightCollision = blocksPixels.slice(rangeY1, rangeY2).map(a => a[Math.ceil(charaPositionTracker[0] + charaSizeX) - 1]);
 						if (charaRightCollision.some(v => v == true)) {
 							// Right collision.
 							charaMovementUnitX = 0;
-							charaPositionTracker[0] = Math.floor(charaPositionTracker[0]) - 1;
+							charaPositionTracker[0] = Math.ceil(charaPositionTracker[0] + charaSizeX) - 1 - charaSizeX;
 							charaPositionNew[0] = charaPositionTracker[0];
 						}
 					}
 					if (charaMovementUnitX < 0) {
-						let charaLeftCollision = blocksPixels.slice(Math.ceil(charaPositionTracker[1]), Math.floor(charaPositionTracker[1] + charaSizeY)).map(a => a[Math.floor(charaPositionTracker[0])]);
+						let charaLeftCollision = blocksPixels.slice(rangeY1, rangeY2).map(a => a[Math.floor(charaPositionTracker[0])]);
 						if (charaLeftCollision.some(v => v == true)) {
 							// Left collision.
 							charaMovementUnitX = 0;
@@ -79,10 +100,22 @@ function physics_start(gameCanvasBlocks, gameCanvasChara, gameKeys) {
 						}
 					}
 					if (charaMovementUnitY > 0) {
-						//
+						let charaBottomCollision = blocksPixels[Math.ceil(charaPositionTracker[1] + charaSizeY) - 1].slice(rangeX1, rangeX2);
+						if (charaBottomCollision.some(v => v == true)) {
+							// Bottom collision.
+							charaMovementUnitY = 0;
+							charaPositionTracker[1] = Math.ceil(charaPositionTracker[1] + charaSizeY) - 1 - charaSizeY;
+							charaPositionNew[1] = charaPositionTracker[1];
+						}
 					}
 					if (charaMovementUnitY < 0) {
-						//
+						let charaTopCollision = blocksPixels[Math.floor(charaPositionTracker[1])].slice(rangeX1, rangeX2);
+						if (charaTopCollision.some(v => v == true)) {
+							// Top collision.
+							charaMovementUnitY = 0;
+							charaPositionTracker[1] = Math.floor(charaPositionTracker[1]) + 1;
+							charaPositionNew[1] = charaPositionTracker[1];
+						}
 					}
 				}
 			}
