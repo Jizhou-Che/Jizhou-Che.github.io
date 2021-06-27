@@ -11,7 +11,8 @@ const gameConfig_iwBlockSize = 32;
 const gameConfig_charaSizeX = 11 / gameConfig_iwBlockSize;
 const gameConfig_charaSizeY = 21 / gameConfig_iwBlockSize;
 
-const gameConfig_speed = 3 / gameConfig_iwBlockSize;
-const gameConfig_jump1InitSpeed = - 8.5 / gameConfig_iwBlockSize;
-const gameConfig_jump1DecayRate = 0.45;
+const gameConfig_speedX = 3 / gameConfig_iwBlockSize;
 const gameConfig_gravity = 0.4 / gameConfig_iwBlockSize;
+const gameConfig_jump1InitSpeedY = - 8.5 / gameConfig_iwBlockSize;
+const gameConfig_jump2InitSpeedY = - 7 / gameConfig_iwBlockSize;
+const gameConfig_jumpDecayRate = 0.45;

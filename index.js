@@ -183,8 +183,9 @@ function loadGame() {
 		});
 		
 		// Start game.
+		let gameMediaBuffers = media_loadAudio(game1_mediaFiles);
 		graphics_resetBlocks(gameCanvasBlocks, game1_blocks);
-		physics_start(gameCanvasBlocks, gameCanvasChara, gameKeys);
+		physics_start(gameCanvasBlocks, gameCanvasChara, gameMediaBuffers, gameKeys);
 	}
 	// TODO: Use cookies to remember game state.
 }
