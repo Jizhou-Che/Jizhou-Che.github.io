@@ -127,11 +127,11 @@ function loadGame() {
 		gameInstruction2.innerHTML = "<pre>Press ESC to quit.</pre>";
 		gameWindow.appendChild(gameInstruction1);
 		gameWindow.appendChild(gameInstruction2);
-		document.addEventListener("keyup", gameKeyListenerError);
+		control_setKeyListenerError();
 	} else {
 		// Display game instructions.
 		let gameInstruction = document.createElement("span");
-		gameInstruction.innerHTML = "<pre>ESC: Quit;   R: Restart;   Z: Jump and Double Jump;   , and .: Move.</pre>";
+		gameInstruction.innerHTML = "<pre>Z: Jump and Double Jump;   , and .: Move;   R: Restart.   ESC: Quit.</pre>";
 		gameWindow.appendChild(gameInstruction);
 		
 		// Display game canvas.
@@ -148,96 +148,38 @@ function loadGame() {
 		gameBackground.style.margin = "auto";
 		gameBackground.style.backgroundColor = "black";
 		gameWindow.appendChild(gameBackground);
+		// Game canvas for spikes.
+		graphics_canvasSpikes = document.createElement("canvas");
+		graphics_canvasSpikes.setAttribute("width", gameWidth.toString());
+		graphics_canvasSpikes.setAttribute("height", gameHeight.toString());
+		graphics_canvasSpikes.style.position = "absolute";
+		graphics_canvasSpikes.style.zIndex = "1";
+		graphics_canvasSpikes.style.top = "0px";
+		graphics_canvasSpikes.style.left = "0px";
+		gameBackground.appendChild(graphics_canvasSpikes);
 		// Game canvas for blocks.
-		let gameCanvasBlocks = document.createElement("canvas");
-		gameCanvasBlocks.setAttribute("width", gameWidth.toString());
-		gameCanvasBlocks.setAttribute("height", gameHeight.toString());
-		gameCanvasBlocks.style.position = "absolute";
-		gameCanvasBlocks.style.zIndex = "1";
-		gameCanvasBlocks.style.top = "0px";
-		gameCanvasBlocks.style.left = "0px";
-		gameBackground.appendChild(gameCanvasBlocks);
+		graphics_canvasBlocks = document.createElement("canvas");
+		graphics_canvasBlocks.setAttribute("width", gameWidth.toString());
+		graphics_canvasBlocks.setAttribute("height", gameHeight.toString());
+		graphics_canvasBlocks.style.position = "absolute";
+		graphics_canvasBlocks.style.zIndex = "2";
+		graphics_canvasBlocks.style.top = "0px";
+		graphics_canvasBlocks.style.left = "0px";
+		gameBackground.appendChild(graphics_canvasBlocks);
 		// Game canvas for Chara.
-		let gameCanvasChara = document.createElement("canvas");
-		gameCanvasChara.setAttribute("width", gameWidth.toString());
-		gameCanvasChara.setAttribute("height", gameHeight.toString());
-		gameCanvasChara.style.position = "absolute";
-		gameCanvasChara.style.zIndex = "2";
-		gameCanvasChara.style.top = "0px";
-		gameCanvasChara.style.left = "0px";
-		gameBackground.appendChild(gameCanvasChara);
-		
-		// Test keys.
-		let gameKeyTest = document.createElement("span");
-		gameKeyTest.setAttribute("id", "game_key_test");
-		gameWindow.appendChild(gameKeyTest);
+		graphics_canvasChara = document.createElement("canvas");
+		graphics_canvasChara.setAttribute("width", gameWidth.toString());
+		graphics_canvasChara.setAttribute("height", gameHeight.toString());
+		graphics_canvasChara.style.position = "absolute";
+		graphics_canvasChara.style.zIndex = "3";
+		graphics_canvasChara.style.top = "0px";
+		graphics_canvasChara.style.left = "0px";
+		gameBackground.appendChild(graphics_canvasChara);
 		
 		// Set key event listeners.
-		// Key status for "w", "a" and "d" respectively.
-		let gameKeys = [false, false, false];
-		document.addEventListener("keydown", function gameKeyListenerDown(event) {
-			gameKeyHandlerDown(event, gameKeys, gameKeyListenerDown);
-		});
-		document.addEventListener("keyup", function gameKeyListenerUp(event) {
-			gameKeyHandlerUp(event, gameKeys, gameKeyListenerUp);
-		});
+		control_setKeyListener();
 		
 		// Start game.
-		let gameMediaBuffers = media_loadAudio(game1_mediaFiles);
-		graphics_resetBlocks(gameCanvasBlocks, game1_blocks);
-		physics_start(gameCanvasBlocks, gameCanvasChara, gameMediaBuffers, gameKeys);
+		control_restartGame();
 	}
-	// TODO: Use cookies to remember game state.
-}
-
-function gameKeyListenerError(event) {
-	if (event.key === "Escape") {
-		document.removeEventListener("keyup", gameKeyListenerError);
-		let gameWindow = document.querySelector("#game_window");
-		gameWindow.parentNode.removeChild(gameWindow);
-	}
-}
-
-function gameKeyHandlerDown(event, gameKeys, gameKeyListenerDown) {
-	switch (event.key) {
-		case "Escape":
-			document.removeEventListener("keydown", gameKeyListenerDown);
-			return;
-		case "z":
-			gameKeys[0] = true;
-			break;
-		case ",":
-			gameKeys[1] = true;
-			gameKeys[2] = false;
-			break;
-		case ".":
-			gameKeys[2] = true;
-			gameKeys[1] = false;
-			break;
-	}
-	
-	let gameKeyTest = document.querySelector("#game_key_test");
-	gameKeyTest.innerHTML = gameKeys.toString();
-}
-
-function gameKeyHandlerUp(event, gameKeys, gameKeyListenerUp) {
-	switch (event.key) {
-		case "Escape":
-			document.removeEventListener("keyup", gameKeyListenerUp);
-			let gameWindow = document.querySelector("#game_window");
-			gameWindow.parentNode.removeChild(gameWindow);
-			return;
-		case "z":
-			gameKeys[0] = false;
-			break;
-		case ",":
-			gameKeys[1] = false;
-			break;
-		case ".":
-			gameKeys[2] = false;
-			break;
-	}
-	
-	let gameKeyTest = document.querySelector("#game_key_test");
-	gameKeyTest.innerHTML = gameKeys.toString();
 }

@@ -1,15 +1,17 @@
-let audioContext = null;
+let media_audioContext = null;
+
+let media_audioBuffers = null;
 
 function media_loadAudio(mediaFiles) {
 	// Audio context can only be created and resumed on direct user interaction.
-	if (audioContext == null) {
-		audioContext = new AudioContext();
+	if (media_audioContext == null) {
+		media_audioContext = new AudioContext();
 	}
-	if (audioContext.state == 'suspended') {
-		audioContext.resume();
+	if (media_audioContext.state == 'suspended') {
+		media_audioContext.resume();
 	}
 	
-	let mediaBuffers = new Array(mediaFiles.length);
+	media_audioBuffers = new Array(mediaFiles.length);
 	
 	for (let i = 0; i < mediaFiles.length; i++) {
 		// Request audio file.
@@ -17,19 +19,17 @@ function media_loadAudio(mediaFiles) {
 		request.open('GET', mediaFiles[i], true);
 		request.responseType = 'arraybuffer';
 		request.onload = function() {
-			mediaBuffers[i] = request.response;
+			media_audioBuffers[i] = request.response;
 		}
 		request.send();
 	}
-	
-	return mediaBuffers;
 }
 
-function media_replayAudio(arrayBuffer) {
-	let source = audioContext.createBufferSource();
-	audioContext.decodeAudioData(arrayBuffer).then(function(buffer) {
+function media_replayAudio(audioID) {
+	let source = media_audioContext.createBufferSource();
+	media_audioContext.decodeAudioData(media_audioBuffers[audioID].slice()).then(function(buffer) {
 		source.buffer = buffer;
-		source.connect(audioContext.destination);
+		source.connect(media_audioContext.destination);
 		source.start();
 	});
 }
