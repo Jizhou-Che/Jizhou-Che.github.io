@@ -31,7 +31,7 @@ function physics_start(chara) {
 	let charaJumpStatus = 2;
 	let charaLastJumpKey = false;
 	let charaKilled = false;
-	let charaCompletelyKilled = false;
+	let charaDeathProgress = 0;
 	
 	// Request animation frame.
 	let lastFrameNumber = 0;
@@ -54,7 +54,15 @@ function physics_start(chara) {
 				}
 				
 				// Chara vertical movement.
-				let charaBottomTouch = blocksPixels[Math.ceil(charaPositionOld[1] + charaSizeY)].slice(Math.floor(charaPositionOld[0]), Math.ceil(charaPositionOld[0] + charaSizeX));
+				let charaStepX1 = Math.floor(charaPositionOld[0]);
+				charaStepX1 = Math.min(Math.max(charaStepX1, 0), blocksImageData.width);
+				let charaStepX2 = Math.ceil(charaPositionOld[0] + charaSizeX);
+				charaStepX2 = Math.min(Math.max(charaStepX2, 0), blocksImageData.width);
+				let charaStepY = Math.ceil(charaPositionOld[1] + charaSizeY);
+				let charaBottomTouch = [];
+				if (charaStepY >= 0 && charaStepY < blocksImageData.height) {
+					charaBottomTouch = blocksPixels[charaStepY].slice(charaStepX1, charaStepX2);
+				}
 				if (charaBottomTouch.some(v => v == true)) {
 					// Chara is on ground.
 					charaJumpStatus = 0;
@@ -94,6 +102,10 @@ function physics_start(chara) {
 				// Collision detection.
 				let charaMovementX = charaPositionNew[0] - charaPositionOld[0];
 				let charaMovementY = charaPositionNew[1] - charaPositionOld[1];
+				let charaCollidesLeft = false;
+				let charaCollidesRight = false;
+				let charaCollidesTop = false;
+				let charaCollidesBottom = false;
 				if (charaMovementX != 0 || charaMovementY != 0) {
 					let charaMovementAbsX = Math.abs(charaMovementX);
 					let charaMovementAbsY = Math.abs(charaMovementY);
@@ -115,53 +127,77 @@ function physics_start(chara) {
 						if (charaMovementUnitX < 0) {
 							rangeX1 += 1;
 						}
+						rangeX1 = Math.min(Math.max(rangeX1, 0), blocksImageData.width);
 						if (charaMovementUnitX > 0) {
 							rangeX2 -= 1;
 						}
+						rangeX2 = Math.min(Math.max(rangeX2, 0), blocksImageData.width);
 						let rangeY1 = Math.floor(charaPositionTracker[1]);
 						let rangeY2 = Math.ceil(charaPositionTracker[1] + charaSizeY);
 						if (charaMovementUnitY < 0) {
 							rangeY1 += 1;
 						}
+						rangeY1 = Math.min(Math.max(rangeY1, 0), blocksImageData.height);
 						if (charaMovementUnitY > 0) {
 							rangeY2 -= 1;
 						}
+						rangeY2 = Math.min(Math.max(rangeY2, 0), blocksImageData.height);
 						// Collision correction.
-						if (charaMovementUnitX > 0) {
-							let charaRightCollision = blocksPixels.slice(rangeY1, rangeY2).map(a => a[Math.ceil(charaPositionTracker[0] + charaSizeX) - 1]);
-							if (charaRightCollision.some(v => v == true)) {
-								// Right collision.
-								charaMovementUnitX = 0;
-								charaPositionTracker[0] = Math.ceil(charaPositionTracker[0] + charaSizeX) - 1 - charaSizeX;
-								charaPositionNew[0] = charaPositionTracker[0];
-							}
-						}
 						if (charaMovementUnitX < 0) {
-							let charaLeftCollision = blocksPixels.slice(rangeY1, rangeY2).map(a => a[Math.floor(charaPositionTracker[0])]);
+							let charaLeftX = Math.floor(charaPositionTracker[0]);
+							let charaLeftCollision = [];
+							if (charaLeftX >= 0 && charaLeftX < blocksImageData.width) {
+								charaLeftCollision = blocksPixels.slice(rangeY1, rangeY2).map(a => a[charaLeftX]);
+							}
 							if (charaLeftCollision.some(v => v == true)) {
 								// Left collision.
+								charaCollidesLeft = true;
 								charaMovementUnitX = 0;
 								charaPositionTracker[0] = Math.floor(charaPositionTracker[0]) + 1;
 								charaPositionNew[0] = charaPositionTracker[0];
 							}
 						}
-						if (charaMovementUnitY > 0) {
-							let charaBottomCollision = blocksPixels[Math.ceil(charaPositionTracker[1] + charaSizeY) - 1].slice(rangeX1, rangeX2);
-							if (charaBottomCollision.some(v => v == true)) {
-								// Bottom collision.
-								charaSpeedY = 0;
-								charaMovementUnitY = 0;
-								charaPositionTracker[1] = Math.ceil(charaPositionTracker[1] + charaSizeY) - 1 - charaSizeY;
-								charaPositionNew[1] = charaPositionTracker[1];
+						if (charaMovementUnitX > 0) {
+							let charaRightX = Math.ceil(charaPositionTracker[0] + charaSizeX) - 1;
+							let charaRightCollision = [];
+							if (charaRightX >= 0 && charaRightX < blocksImageData.width) {
+								charaRightCollision = blocksPixels.slice(rangeY1, rangeY2).map(a => a[charaRightX]);
+							}
+							if (charaRightCollision.some(v => v == true)) {
+								// Right collision.
+								charaCollidesRight = true;
+								charaMovementUnitX = 0;
+								charaPositionTracker[0] = Math.ceil(charaPositionTracker[0] + charaSizeX) - 1 - charaSizeX;
+								charaPositionNew[0] = charaPositionTracker[0];
 							}
 						}
 						if (charaMovementUnitY < 0) {
-							let charaTopCollision = blocksPixels[Math.floor(charaPositionTracker[1])].slice(rangeX1, rangeX2);
+							let charaTopY = Math.floor(charaPositionTracker[1]);
+							let charaTopCollision = [];
+							if (charaTopY >= 0 && charaTopY < blocksImageData.height) {
+								charaTopCollision = blocksPixels[charaTopY].slice(rangeX1, rangeX2);
+							}
 							if (charaTopCollision.some(v => v == true)) {
 								// Top collision.
+								charaCollidesTop = true;
 								charaSpeedY = 0;
 								charaMovementUnitY = 0;
 								charaPositionTracker[1] = Math.floor(charaPositionTracker[1]) + 1;
+								charaPositionNew[1] = charaPositionTracker[1];
+							}
+						}
+						if (charaMovementUnitY > 0) {
+							let charaBottomY = Math.ceil(charaPositionTracker[1] + charaSizeY) - 1;
+							let charaBottomCollision = [];
+							if (charaBottomY >= 0 && charaBottomY < blocksImageData.height) {
+								charaBottomCollision = blocksPixels[charaBottomY].slice(rangeX1, rangeX2);
+							}
+							if (charaBottomCollision.some(v => v == true)) {
+								// Bottom collision.
+								charaCollidesBottom = true;
+								charaSpeedY = 0;
+								charaMovementUnitY = 0;
+								charaPositionTracker[1] = Math.ceil(charaPositionTracker[1] + charaSizeY) - 1 - charaSizeY;
 								charaPositionNew[1] = charaPositionTracker[1];
 							}
 						}
@@ -172,9 +208,28 @@ function physics_start(chara) {
 				let charaSpikeCollision = spikesContext.getImageData(charaPositionNew[0], charaPositionNew[1], charaSizeX, charaSizeY);
 				for (let i = 3; i < charaSpikeCollision.data.length; i += 4) {
 					if (charaSpikeCollision.data[i] != 0) {
+						// Chara was pricked to death.
 						charaKilled = true;
+						media_replayAudio(2);
 						break;
 					}
+				}
+				let charaLeftX = Math.floor(charaPositionNew[0]);
+				let charaRightX = Math.ceil(charaPositionNew[0] + charaSizeX) - 1;
+				let charaTopY = Math.floor(charaPositionNew[1]);
+				let charaBottomY = Math.ceil(charaPositionNew[1] + charaSizeY) - 1;
+				if ((charaLeftX < 0 && charaRightX < 0) ||
+					(charaLeftX >= blocksImageData.width && charaRightX >= blocksImageData.width) ||
+					(charaTopY < 0 && charaBottomY < 0) ||
+					(charaTopY >= blocksImageData.height && charaBottomY >= blocksImageData.height)) {
+					// Chara fell out of the world.
+					charaKilled = true;
+					media_replayAudio(2);
+				}
+				if ((charaCollidesLeft && charaCollidesRight) || (charaCollidesTop && charaCollidesBottom)) {
+					// Chara suffocated in a wall.
+					charaKilled = true;
+					media_replayAudio(2);
 				}
 			}
 			
@@ -182,13 +237,13 @@ function physics_start(chara) {
 			if (!charaKilled) {
 				graphics_updateChara(charaPositionOld, charaPositionNew);
 			} else {
-				charaCompletelyKilled = graphics_updateDeadChara(charaPositionOld, charaPositionNew, frameDiff);
+				charaDeathProgress = graphics_updateDeadChara(charaPositionNew, charaDeathProgress);
 			}
 			charaPositionOld = charaPositionNew;
 			lastFrameNumber = frameNumber;
 		}
 		
-		if (!charaCompletelyKilled) {
+		if (charaDeathProgress < 1) {
 			physics_frame = requestAnimationFrame(renderFrame);
 		}
 	});

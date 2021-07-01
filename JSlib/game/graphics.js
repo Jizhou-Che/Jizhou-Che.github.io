@@ -136,45 +136,35 @@ function graphics_resetChara(row, col) {
 	}
 }
 
-function graphics_updateChara(oldPosition, newPosition) {
+function graphics_updateChara(positionOld, positionNew) {
 	if (graphics_canvasChara.getContext) {
-		if (oldPosition[0] != newPosition[0] || oldPosition[1] != newPosition[1]) {
+		if (positionOld[0] != positionNew[0] || positionOld[1] != positionNew[1]) {
 			let context = graphics_canvasChara.getContext('2d');
 			context.fillStyle = 'yellow';
 			let blockSize = graphics_canvasChara.width / gameConfig_numBlocksX;
 			let charaSizeX = gameConfig_charaSizeX * blockSize;
 			let charaSizeY = gameConfig_charaSizeY * blockSize;
-			context.clearRect(oldPosition[0] - 1, oldPosition[1] - 1, charaSizeX + 2, charaSizeY + 2);
-			context.fillRect(newPosition[0], newPosition[1], charaSizeX, charaSizeY);
+			context.clearRect(positionOld[0] - 1, positionOld[1] - 1, charaSizeX + 2, charaSizeY + 2);
+			context.fillRect(positionNew[0], positionNew[1], charaSizeX, charaSizeY);
 		}
 	} else {
 		console.log("Cannot get context for canvas.");
 	}
 }
 
-function graphics_updateDeadChara(oldPosition, newPosition, frameDiff) {
+function graphics_updateDeadChara(position, progress) {
 	if (graphics_canvasChara.getContext) {
 		let context = graphics_canvasChara.getContext('2d');
 		let blockSize = graphics_canvasChara.width / gameConfig_numBlocksX;
 		let charaSizeX = gameConfig_charaSizeX * blockSize;
 		let charaSizeY = gameConfig_charaSizeY * blockSize;
-		let alpha = 1;
-		if (oldPosition[0] != newPosition[0] || oldPosition[1] != newPosition[1]) {
+		if (progress < 1) {
 			context.clearRect(0, 0, graphics_canvasChara.width, graphics_canvasChara.height);
-			context.fillStyle = 'rgba(255, 0, 0, 1)';
-			context.fillRect(newPosition[0], newPosition[1], charaSizeX, charaSizeY);
-		} else {
-			alpha = context.getImageData(newPosition[0] + charaSizeX / 2, newPosition[1] + charaSizeY / 2, 1, 1).data[3];
-			alpha -= 17 * frameDiff;
-			if (alpha < 0) {
-				alpha = 0;
-			}
-			let deathProgress = (255 - alpha) / 255;
-			context.clearRect(0, 0, graphics_canvasChara.width, graphics_canvasChara.height);
-			context.fillStyle = 'rgba(255, 0, 0, ' + alpha / 255 + ')';
-			context.fillRect(newPosition[0] - charaSizeX * 10 * deathProgress, newPosition[1] - charaSizeY * 10 * deathProgress, charaSizeX + charaSizeX * 20 * deathProgress, charaSizeY + charaSizeY * 20 * deathProgress);
+			context.fillStyle = 'rgba(255, 0, 0, ' + (1 - progress) + ')';
+			context.fillRect(position[0] - charaSizeX * 10 * progress, position[1] - charaSizeY * 10 * progress, charaSizeX + charaSizeX * 20 * progress, charaSizeY + charaSizeY * 20 * progress);
 		}
-		return alpha == 0;
+		progress += 1 / 15;
+		return progress;
 	} else {
 		console.log("Cannot get context for canvas.");
 	}

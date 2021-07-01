@@ -41,5 +41,6 @@ let game1_spikes = [
 
 let game1_mediaFiles = [
 	'Resources/Sound/jump1.wav',
-	'Resources/Sound/jump2.wav'
+	'Resources/Sound/jump2.wav',
+	'Resources/Sound/death.wav'
 ];
