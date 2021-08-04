@@ -1,6 +1,6 @@
 let game1_chara = {
-	spawnRow: 0,
-	spawnCol: 3
+	spawnRow: 12,
+	spawnCol: 2
 }
 
 let game1_blocks = [
@@ -17,8 +17,8 @@ let game1_blocks = [
 	[1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 	[1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1],
 	[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	[1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+	[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
 let game1_spikes = [
@@ -31,16 +31,51 @@ let game1_spikes = [
 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 	[0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0],
-	[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 	[0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
 	[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ];
 
-let game1_mediaFiles = [
-	'Resources/Sound/jump1.wav',
-	'Resources/Sound/jump2.wav',
-	'Resources/Sound/death.wav'
+let game1_triggers = [
+	{
+		id: 0,
+		stage: 0,
+		progress: 0,
+		fire: function(charaPosition, blocksPixels, frameDiff) {
+			switch (this.stage) {
+				case 0:
+					if (trigger_charaReachBlock(charaPosition, 12, 11)) {
+						trigger_addBlock(blocksPixels, 12, 11);
+						this.stage = 1;
+					}
+					break;
+			}
+		}
+	},
+	{
+		id: 1,
+		stage: 0,
+		progress: 0,
+		fire: function(charaPosition, blocksPixels, frameDiff) {
+			switch (this.stage) {
+				case 0:
+					if (trigger_charaReachBlock(charaPosition, 11, 7)) {
+						trigger_addSpike(1, 11, 7);
+						this.stage = 1;
+					}
+					break;
+			}
+		}
+	}
 ];
+
+let game1_mediaFiles = {
+	"sound_jump1" : "Resources/Sound/jump1.wav",
+	"sound_jump2" : "Resources/Sound/jump2.wav",
+	"sound_death" : "Resources/Sound/death.wav",
+	"music_background" : "Resources/Music/test_bgm.mp3",
+	"music_death" : "Resources/Music/death.wav"
+};

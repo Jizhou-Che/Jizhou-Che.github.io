@@ -76,12 +76,12 @@ function physics_start(chara) {
 						case 0:
 							charaJumpStatus = 1;
 							charaSpeedY = charaJump1InitSpeedY;
-							media_replayAudio(0);
+							media_playSound("sound_jump1");
 							break;
 						case 1:
 							charaJumpStatus = 2;
 							charaSpeedY = charaJump2InitSpeedY;
-							media_replayAudio(1);
+							media_playSound("sound_jump2");
 							break;
 					}
 				}
@@ -98,6 +98,7 @@ function physics_start(chara) {
 				charaPositionNew[1] += charaSpeedY;
 				
 				// Trigger check.
+				trigger_fireTriggers(charaPositionNew, blocksPixels, frameDiff);
 				
 				// Collision detection.
 				let charaMovementX = charaPositionNew[0] - charaPositionOld[0];
@@ -210,7 +211,9 @@ function physics_start(chara) {
 					if (charaSpikeCollision.data[i] != 0) {
 						// Chara was pricked to death.
 						charaKilled = true;
-						media_replayAudio(2);
+						media_pauseMusic("music_background");
+						media_playSound("sound_death");
+						media_playMusic("music_death", false);
 						break;
 					}
 				}
@@ -224,12 +227,16 @@ function physics_start(chara) {
 					(charaTopY >= blocksImageData.height && charaBottomY >= blocksImageData.height)) {
 					// Chara fell out of the world.
 					charaKilled = true;
-					media_replayAudio(2);
+					media_pauseMusic("music_background");
+					media_playSound("sound_death");
+					media_playMusic("music_death", false);
 				}
 				if ((charaCollidesLeft && charaCollidesRight) || (charaCollidesTop && charaCollidesBottom)) {
 					// Chara suffocated in a wall.
 					charaKilled = true;
-					media_replayAudio(2);
+					media_pauseMusic("music_background");
+					media_playSound("sound_death");
+					media_playMusic("music_death", false);
 				}
 			}
 			
@@ -237,7 +244,8 @@ function physics_start(chara) {
 			if (!charaKilled) {
 				graphics_updateChara(charaPositionOld, charaPositionNew);
 			} else {
-				charaDeathProgress = graphics_updateDeadChara(charaPositionNew, charaDeathProgress);
+				graphics_updateDeadChara(charaPositionNew, charaDeathProgress);
+				charaDeathProgress += 1 / 15 * frameDiff;
 			}
 			charaPositionOld = charaPositionNew;
 			lastFrameNumber = frameNumber;

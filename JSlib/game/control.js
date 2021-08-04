@@ -1,11 +1,14 @@
-let control_gameKeys = [false, false, false]
+let control_gameKeys = [false, false, false];
 
 function control_restartGame() {
 	// TODO: Use cookies to remember game level.
 	physics_stop();
+	media_pauseMusic("music_background");
+	media_stopMusic();
 	media_loadAudio(game1_mediaFiles);
 	graphics_resetSpikes(game1_spikes);
 	graphics_resetBlocks(game1_blocks);
+	trigger_resetTriggers(game1_triggers);
 	physics_start(game1_chara);
 }
 
@@ -23,7 +26,7 @@ function control_setKeyListener() {
 }
 
 function control_keyListenerError(event) {
-	if (event.key === "Escape") {
+	if (event.code === "Escape") {
 		document.removeEventListener("keyup", control_keyListenerError);
 		let gameWindow = document.querySelector("#game_window");
 		gameWindow.parentNode.removeChild(gameWindow);
@@ -31,18 +34,18 @@ function control_keyListenerError(event) {
 }
 
 function control_keyHandlerDown(event, gameKeyListenerDown) {
-	switch (event.key) {
+	switch (event.code) {
 		case "Escape":
 			document.removeEventListener("keydown", gameKeyListenerDown);
 			return;
-		case "z":
+		case "KeyZ":
 			control_gameKeys[0] = true;
 			break;
-		case ",":
+		case "Comma":
 			control_gameKeys[1] = true;
 			control_gameKeys[2] = false;
 			break;
-		case ".":
+		case "Period":
 			control_gameKeys[2] = true;
 			control_gameKeys[1] = false;
 			break;
@@ -50,22 +53,24 @@ function control_keyHandlerDown(event, gameKeyListenerDown) {
 }
 
 function control_keyHandlerUp(event, gameKeyListenerUp) {
-	switch (event.key) {
+	switch (event.code) {
 		case "Escape":
 			document.removeEventListener("keyup", gameKeyListenerUp);
+			media_stopMusic();
+			media_clearMusicSources();
 			let gameWindow = document.querySelector("#game_window");
 			gameWindow.parentNode.removeChild(gameWindow);
 			return;
-		case "z":
+		case "KeyZ":
 			control_gameKeys[0] = false;
 			break;
-		case ",":
+		case "Comma":
 			control_gameKeys[1] = false;
 			break;
-		case ".":
+		case "Period":
 			control_gameKeys[2] = false;
 			break;
-		case "r":
+		case "KeyR":
 			control_restartGame(graphics_canvasSpikes, graphics_canvasBlocks, graphics_canvasChara);
 			break;
 	}

@@ -163,8 +163,6 @@ function graphics_updateDeadChara(position, progress) {
 			context.fillStyle = 'rgba(255, 0, 0, ' + (1 - progress) + ')';
 			context.fillRect(position[0] - charaSizeX * 10 * progress, position[1] - charaSizeY * 10 * progress, charaSizeX + charaSizeX * 20 * progress, charaSizeY + charaSizeY * 20 * progress);
 		}
-		progress += 1 / 15;
-		return progress;
 	} else {
 		console.log("Cannot get context for canvas.");
 	}

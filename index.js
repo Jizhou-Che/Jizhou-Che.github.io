@@ -131,7 +131,7 @@ function loadGame() {
 	} else {
 		// Display game instructions.
 		let gameInstruction = document.createElement("span");
-		gameInstruction.innerHTML = "<pre>Z: Jump and Double Jump;   , and .: Move;   R: Restart.   ESC: Quit.</pre>";
+		gameInstruction.innerHTML = "<pre>   <span class='keycap'>Z</span>: Jump and Double Jump;   <span class='keycap'>,</span> and <span class='keycap'>.</span>: Move;   <span class='keycap'>R</span>: Restart.   <span class='keycap'>ESC</span>: Quit.</pre>";
 		gameWindow.appendChild(gameInstruction);
 		
 		// Display game canvas.

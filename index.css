@@ -83,3 +83,10 @@ span {
 .content_title {
 	height: 150px;
 }
+
+.keycap {
+	border: solid 2px lightgray;
+	border-radius: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
