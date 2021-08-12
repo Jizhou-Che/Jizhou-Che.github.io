@@ -211,7 +211,7 @@ function physics_start(chara) {
 					if (charaSpikeCollision.data[i] != 0) {
 						// Chara was pricked to death.
 						charaKilled = true;
-						media_pauseMusic("music_background");
+						media_muteMusic("music_background");
 						media_playSound("sound_death");
 						media_playMusic("music_death", false);
 						break;
@@ -227,14 +227,14 @@ function physics_start(chara) {
 					(charaTopY >= blocksImageData.height && charaBottomY >= blocksImageData.height)) {
 					// Chara fell out of the world.
 					charaKilled = true;
-					media_pauseMusic("music_background");
+					media_muteMusic("music_background");
 					media_playSound("sound_death");
 					media_playMusic("music_death", false);
 				}
 				if ((charaCollidesLeft && charaCollidesRight) || (charaCollidesTop && charaCollidesBottom)) {
 					// Chara suffocated in a wall.
 					charaKilled = true;
-					media_pauseMusic("music_background");
+					media_muteMusic("music_background");
 					media_playSound("sound_death");
 					media_playMusic("music_death", false);
 				}

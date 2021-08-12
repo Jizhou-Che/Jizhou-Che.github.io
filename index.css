@@ -84,9 +84,17 @@ span {
 	height: 150px;
 }
 
-.keycap {
+.keycap_up {
 	border: solid 2px lightgray;
 	border-radius: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
+}
+
+.keycap_down {
+	border: solid 2px lightgray;
+	border-radius: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	background-color: lightgray;
 }
