@@ -28,30 +28,3 @@ function trigger_charaReachBlock(charaPosition, row, col) {
 		return false;
 	}
 }
-
-function trigger_addBlock(blocksPixels, row, col) {
-	let blockSize = graphics_canvasBlocks.width / gameConfig_numBlocksX;
-	graphics_drawBlock(row, col);
-	for (let i = row * blockSize; i < (row + 1) * blockSize; i++) {
-		for (let j = col * blockSize; j < (col + 1) * blockSize; j++) {
-			blocksPixels[i][j] = true;
-		}
-	}
-}
-
-function trigger_addSpike(type, row, col) {
-	switch (type) {
-		case 1:
-			graphics_drawSpikeUp(row, col);
-			break;
-		case 2:
-			graphics_drawSpikeDown(row, col);
-			break;
-		case 3:
-			graphics_drawSpikeLeft(row, col);
-			break;
-		case 4:
-			graphics_drawSpikeRight(row, col);
-			break;
-	}
-}

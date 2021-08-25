@@ -2,6 +2,11 @@ let graphics_canvasSpikes = null;
 let graphics_canvasBlocks = null;
 let graphics_canvasChara = null;
 
+function graphics_resetMap(map) {
+	graphics_resetBlocks(map);
+	graphics_resetSpikes(map);
+}
+
 function graphics_resetSpikes(map) {
 	if (graphics_canvasSpikes.getContext) {
 		let context = graphics_canvasSpikes.getContext('2d');
@@ -10,16 +15,16 @@ function graphics_resetSpikes(map) {
 			for (col in map[row]) {
 				switch (map[row][col]) {
 					case 1:
-						graphics_drawSpikeUp(parseInt(row), parseInt(col));
+						graphics_drawSpikeUp(parseInt(row), parseInt(col), 1);
 						break;
 					case 2:
-						graphics_drawSpikeDown(parseInt(row), parseInt(col));
+						graphics_drawSpikeDown(parseInt(row), parseInt(col), 1);
 						break;
 					case 3:
-						graphics_drawSpikeLeft(parseInt(row), parseInt(col));
+						graphics_drawSpikeLeft(parseInt(row), parseInt(col), 1);
 						break;
 					case 4:
-						graphics_drawSpikeRight(parseInt(row), parseInt(col));
+						graphics_drawSpikeRight(parseInt(row), parseInt(col), 1);
 						break;
 				}
 			}
@@ -29,60 +34,60 @@ function graphics_resetSpikes(map) {
 	}
 }
 
-function graphics_drawSpikeUp(row, col) {
+function graphics_drawSpikeUp(row, col, size) {
 	if (graphics_canvasSpikes.getContext) {
 		let context = graphics_canvasSpikes.getContext('2d');
 		context.fillStyle = 'white';
 		let blockSize = graphics_canvasSpikes.width / gameConfig_numBlocksX;
 		context.beginPath();
-		context.moveTo(col * blockSize, (row + 1) * blockSize);
-		context.lineTo((col + 0.5) * blockSize, row * blockSize);
-		context.lineTo((col + 1) * blockSize, (row + 1) * blockSize);
+		context.moveTo(col * blockSize, (row + size) * blockSize);
+		context.lineTo((col + 0.5 * size) * blockSize, row * blockSize);
+		context.lineTo((col + size) * blockSize, (row + size) * blockSize);
 		context.fill();
 	} else {
 		console.log("Cannot get context for canvas.");
 	}
 }
 
-function graphics_drawSpikeDown(row, col) {
+function graphics_drawSpikeDown(row, col, size) {
 	if (graphics_canvasSpikes.getContext) {
 		let context = graphics_canvasSpikes.getContext('2d');
 		context.fillStyle = 'white';
 		let blockSize = graphics_canvasSpikes.width / gameConfig_numBlocksX;
 		context.beginPath();
 		context.moveTo(col * blockSize, row * blockSize);
-		context.lineTo((col + 0.5) * blockSize, (row + 1) * blockSize);
-		context.lineTo((col + 1) * blockSize, row * blockSize);
+		context.lineTo((col + 0.5 * size) * blockSize, (row + size) * blockSize);
+		context.lineTo((col + size) * blockSize, row * blockSize);
 		context.fill();
 	} else {
 		console.log("Cannot get context for canvas.");
 	}
 }
 
-function graphics_drawSpikeLeft(row, col) {
+function graphics_drawSpikeLeft(row, col, size) {
 	if (graphics_canvasSpikes.getContext) {
 		let context = graphics_canvasSpikes.getContext('2d');
 		context.fillStyle = 'white';
 		let blockSize = graphics_canvasSpikes.width / gameConfig_numBlocksX;
 		context.beginPath();
-		context.moveTo((col + 1) * blockSize, row * blockSize);
-		context.lineTo(col * blockSize, (row + 0.5) * blockSize);
-		context.lineTo((col + 1) * blockSize, (row + 1) * blockSize);
+		context.moveTo((col + size) * blockSize, row * blockSize);
+		context.lineTo(col * blockSize, (row + 0.5 * size) * blockSize);
+		context.lineTo((col + size) * blockSize, (row + size) * blockSize);
 		context.fill();
 	} else {
 		console.log("Cannot get context for canvas.");
 	}
 }
 
-function graphics_drawSpikeRight(row, col) {
+function graphics_drawSpikeRight(row, col, size) {
 	if (graphics_canvasSpikes.getContext) {
 		let context = graphics_canvasSpikes.getContext('2d');
 		context.fillStyle = 'white';
 		let blockSize = graphics_canvasSpikes.width / gameConfig_numBlocksX;
 		context.beginPath();
 		context.moveTo(col * blockSize, row * blockSize);
-		context.lineTo((col + 1) * blockSize, (row + 0.5) * blockSize);
-		context.lineTo(col * blockSize, (row + 1) * blockSize);
+		context.lineTo((col + size) * blockSize, (row + 0.5 * size) * blockSize);
+		context.lineTo(col * blockSize, (row + size) * blockSize);
 		context.fill();
 	} else {
 		console.log("Cannot get context for canvas.");
@@ -95,8 +100,10 @@ function graphics_resetBlocks(map) {
 		context.clearRect(0, 0, graphics_canvasBlocks.width, graphics_canvasBlocks.height);
 		for (row in map) {
 			for (col in map[row]) {
-				if (map[row][col] == 1) {
-					graphics_drawBlock(parseInt(row), parseInt(col));
+				switch (map[row][col]) {
+					case 9:
+						graphics_drawBlock(parseInt(row), parseInt(col), 1);
+						break;
 				}
 			}
 		}
@@ -105,15 +112,15 @@ function graphics_resetBlocks(map) {
 	}
 }
 
-function graphics_drawBlock(row, col) {
+function graphics_drawBlock(row, col, size) {
 	if (graphics_canvasBlocks.getContext) {
 		let context = graphics_canvasBlocks.getContext('2d');
 		context.fillStyle = 'white';
 		let blockSize = graphics_canvasBlocks.width / gameConfig_numBlocksX;
-		context.fillRect(col * blockSize, row * blockSize, blockSize, blockSize);
-		let blockBorder = Math.ceil(blockSize / 10);
+		context.fillRect(col * blockSize, row * blockSize, blockSize * size, blockSize * size);
+		let blockBorder = Math.ceil(blockSize * size / 10);
 		context.fillStyle = 'black';
-		context.fillRect(col * blockSize + blockBorder, row * blockSize + blockBorder, blockSize - blockBorder * 2, blockSize - blockBorder * 2);
+		context.fillRect(col * blockSize + blockBorder, row * blockSize + blockBorder, blockSize * size - blockBorder * 2, blockSize * size - blockBorder * 2);
 	} else {
 		console.log("Cannot get context for canvas.");
 	}

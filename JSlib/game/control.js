@@ -6,8 +6,7 @@ function control_restartGame() {
 	media_muteMusic("music_background");
 	media_stopMusicSoft();
 	media_loadAudio(game1_mediaFiles);
-	graphics_resetSpikes(game1_spikes);
-	graphics_resetBlocks(game1_blocks);
+	graphics_resetMap(game1_map);
 	trigger_resetTriggers(game1_triggers);
 	physics_start(game1_chara);
 }
