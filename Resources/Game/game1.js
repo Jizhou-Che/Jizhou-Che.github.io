@@ -73,6 +73,6 @@ let game1_mediaFiles = {
 	"sound_jump1" : "Resources/Sound/jump1.wav",
 	"sound_jump2" : "Resources/Sound/jump2.wav",
 	"sound_death" : "Resources/Sound/death.wav",
-	"music_background" : "Resources/Music/Megaman Junction.mp3",
-	"music_death" : "Resources/Music/Might Is Right But Tight.wav"
+	"music_background" : "Resources/Music/Dr. Wily Stage 1 - 2.m4a",
+	"music_death" : "Resources/Music/Might Is Right But Tight.m4a"
 };
