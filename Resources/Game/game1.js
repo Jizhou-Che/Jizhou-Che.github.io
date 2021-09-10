@@ -1,6 +1,5 @@
 let game1_chara = {
-	spawnRow: 12,
-	spawnCol: 2
+	spawnPosition: [12, 2]
 }
 
 let game1_map = [
@@ -29,9 +28,9 @@ let game1_triggers = [
 		fire: function(charaPosition, blocksPixels, frameDiff) {
 			switch (this.stage) {
 				case 0:
-					trap_addSpike(1, 3.95, 3.5, 1);
-					trap_addSpike(3, 2, 2, 0.5);
-					trap_addBlock(blocksPixels, 10, 16.25, 0.5);
+					trap_addSpike(1, 1, [3.95, 3.5]);
+					trap_addSpike(3, 0.5, [2, 2]);
+					trap_addBlock(blocksPixels, 0.5, [10, 16.25]);
 					this.stage = 1;
 					break;
 			}
@@ -44,8 +43,8 @@ let game1_triggers = [
 		fire: function(charaPosition, blocksPixels, frameDiff) {
 			switch (this.stage) {
 				case 0:
-					if (trigger_charaReachBlock(charaPosition, 12, 11)) {
-						trap_addBlock(blocksPixels, 12, 11, 1);
+					if (trigger_charaReachBlock(charaPosition, [12, 11])) {
+						trap_addBlock(blocksPixels, 1, [12, 11]);
 						this.stage = 1;
 					}
 					break;
@@ -59,8 +58,24 @@ let game1_triggers = [
 		fire: function(charaPosition, blocksPixels, frameDiff) {
 			switch (this.stage) {
 				case 0:
-					if (trigger_charaReachBlock(charaPosition, 11, 7)) {
-						trap_addSpike(1, 11, 7, 1);
+					if (trigger_charaReachBlock(charaPosition, [11, 7])) {
+						trap_addSpike(1, 1, [11, 7]);
+						this.stage = 1;
+					}
+					break;
+			}
+		}
+	},
+	{
+		id: 3,
+		stage: 0,
+		progress: 0,
+		fire: function(charaPosition, blocksPixels, frameDiff) {
+			switch (this.stage) {
+				case 0:
+					if (trigger_charaReachBlock(charaPosition, [13, 20.5])) {
+						trap_addMovingSpikeLinear(3, 1, [13, 22], [13, 19], 100);
+						trap_addMovingSpikeLinear(4, 1, [13, 19], [13, 22], 100);
 						this.stage = 1;
 					}
 					break;

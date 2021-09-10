@@ -3,6 +3,7 @@ let physics_frame = null;
 function physics_start(chara) {
 	// Initialise spikes.
 	let spikesContext = graphics_canvasSpikes.getContext('2d');
+	let trapSpikesContext = graphics_canvasTrapSpikes.getContext('2d');
 	
 	// Initialise blocks.
 	let blocksContext = graphics_canvasBlocks.getContext('2d');
@@ -18,7 +19,7 @@ function physics_start(chara) {
 	}
 	
 	// Initialise Chara.
-	let charaPositionOld = graphics_resetChara(chara.spawnRow, chara.spawnCol);
+	let charaPositionOld = graphics_resetChara(chara.spawnPosition);
 	let charaPositionNew = charaPositionOld.slice();
 	let blockSize = graphics_canvasBlocks.width / gameConfig_numBlocksX;
 	let charaSizeX = gameConfig_charaSizeX * blockSize;
@@ -97,8 +98,11 @@ function physics_start(chara) {
 				}
 				charaPositionNew[1] += charaSpeedY;
 				
-				// Trigger check.
+				// Fire triggers.
 				trigger_fireTriggers(charaPositionNew, blocksPixels, frameDiff);
+				
+				// Update trap spikes.
+				trap_updateTrapSpikes(frameDiff);
 				
 				// Collision detection.
 				let charaMovementX = charaPositionNew[0] - charaPositionOld[0];
@@ -207,8 +211,9 @@ function physics_start(chara) {
 				
 				// Death check.
 				let charaSpikeCollision = spikesContext.getImageData(charaPositionNew[0], charaPositionNew[1], charaSizeX, charaSizeY);
+				let charaTrapSpikeCollision = trapSpikesContext.getImageData(charaPositionNew[0], charaPositionNew[1], charaSizeX, charaSizeY);
 				for (let i = 3; i < charaSpikeCollision.data.length; i += 4) {
-					if (charaSpikeCollision.data[i] != 0) {
+					if (charaSpikeCollision.data[i] != 0 || charaTrapSpikeCollision.data[i] != 0) {
 						// Chara was pricked to death.
 						charaKilled = true;
 						media_muteMusic("music_background");

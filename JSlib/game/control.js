@@ -8,6 +8,7 @@ function control_restartGame() {
 	media_loadAudio(game1_mediaFiles);
 	graphics_resetMap(game1_map);
 	trigger_resetTriggers(game1_triggers);
+	trap_resetTraps();
 	physics_start(game1_chara);
 }
 

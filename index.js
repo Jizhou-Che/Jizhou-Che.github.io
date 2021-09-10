@@ -157,12 +157,21 @@ function loadGame() {
 		graphics_canvasSpikes.style.top = "0px";
 		graphics_canvasSpikes.style.left = "0px";
 		gameBackground.appendChild(graphics_canvasSpikes);
+		// Game canvas for trap spikes.
+		graphics_canvasTrapSpikes = document.createElement("canvas");
+		graphics_canvasTrapSpikes.setAttribute("width", gameWidth.toString());
+		graphics_canvasTrapSpikes.setAttribute("height", gameHeight.toString());
+		graphics_canvasTrapSpikes.style.position = "absolute";
+		graphics_canvasTrapSpikes.style.zIndex = "2";
+		graphics_canvasTrapSpikes.style.top = "0px";
+		graphics_canvasTrapSpikes.style.left = "0px";
+		gameBackground.appendChild(graphics_canvasTrapSpikes);
 		// Game canvas for blocks.
 		graphics_canvasBlocks = document.createElement("canvas");
 		graphics_canvasBlocks.setAttribute("width", gameWidth.toString());
 		graphics_canvasBlocks.setAttribute("height", gameHeight.toString());
 		graphics_canvasBlocks.style.position = "absolute";
-		graphics_canvasBlocks.style.zIndex = "2";
+		graphics_canvasBlocks.style.zIndex = "3";
 		graphics_canvasBlocks.style.top = "0px";
 		graphics_canvasBlocks.style.left = "0px";
 		gameBackground.appendChild(graphics_canvasBlocks);
@@ -171,7 +180,7 @@ function loadGame() {
 		graphics_canvasChara.setAttribute("width", gameWidth.toString());
 		graphics_canvasChara.setAttribute("height", gameHeight.toString());
 		graphics_canvasChara.style.position = "absolute";
-		graphics_canvasChara.style.zIndex = "3";
+		graphics_canvasChara.style.zIndex = "4";
 		graphics_canvasChara.style.top = "0px";
 		graphics_canvasChara.style.left = "0px";
 		gameBackground.appendChild(graphics_canvasChara);

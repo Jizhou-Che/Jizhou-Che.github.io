@@ -1,26 +1,45 @@
-function trap_addBlock(blocksPixels, row, col, size) {
+let trap_trapList = [];
+
+function trap_resetTraps() {
+	trap_trapList = [];
+}
+
+function trap_updateTrapSpikes(frameDiff) {
+	graphics_clearTrapSpikes();
+	for (let trapID in trap_trapList) {
+		if (!trap_trapList[trapID].complete) {
+			trap_trapList[trapID].fire(frameDiff);
+		}
+	}
+}
+
+function trap_addBlock(blocksPixels, size, position) {
 	let blockSize = graphics_canvasBlocks.width / gameConfig_numBlocksX;
-	graphics_drawBlock(row, col, size);
-	for (let i = Math.floor(row * blockSize); i < (row + size) * blockSize; i++) {
-		for (let j = Math.floor(col * blockSize); j < (col + size) * blockSize; j++) {
+	graphics_drawBlock(size, position);
+	for (let i = Math.floor(position[0] * blockSize); i < (position[0] + size) * blockSize; i++) {
+		for (let j = Math.floor(position[1] * blockSize); j < (position[1] + size) * blockSize; j++) {
 			blocksPixels[i][j] = true;
 		}
 	}
 }
 
-function trap_addSpike(type, row, col, size) {
-	switch (type) {
-		case 1:
-			graphics_drawSpikeUp(row, col, size);
-			break;
-		case 2:
-			graphics_drawSpikeDown(row, col, size);
-			break;
-		case 3:
-			graphics_drawSpikeLeft(row, col, size);
-			break;
-		case 4:
-			graphics_drawSpikeRight(row, col, size);
-			break;
-	}
+function trap_addSpike(type, size, position) {
+	graphics_drawSpike(graphics_canvasSpikes, type, size, position);
+}
+
+function trap_addMovingSpikeLinear(type, size, startPosition, endPosition, numFrames) {
+	trap_trapList.push({
+		id: trap_trapList.length,
+		complete: false,
+		currentFrame: 0,
+		fire: function(frameDiff) {
+			this.currentFrame += frameDiff;
+			if (this.currentFrame < numFrames) {
+				let currentPosition = [startPosition[0] + (endPosition[0] - startPosition[0]) * (this.currentFrame / numFrames), startPosition[1] + (endPosition[1] - startPosition[1]) * (this.currentFrame / numFrames)];
+				graphics_drawSpike(graphics_canvasTrapSpikes, type, size, currentPosition);
+			} else {
+				this.complete = true;
+			}
+		}
+	});
 }
