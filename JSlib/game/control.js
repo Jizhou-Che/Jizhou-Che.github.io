@@ -1,4 +1,9 @@
+// KeyZ, Comma, Period.
 let control_gameKeys = [false, false, false];
+// KeyQ, KeyT, KeyP, ShiftLeft, ShiftRight, Slash.
+let control_gameKeysCheat = [false, false, false, false, false, false];
+
+let control_charaTeleportation = null;
 
 function control_restartGame() {
 	// TODO: Use cookies to remember game level.
@@ -65,6 +70,24 @@ function control_keyHandlerDown(event, gameKeyListenerDown) {
 			let keycap_restart = document.querySelector("#keycap_restart");
 			keycap_restart.classList.remove('keycap_up');
 			keycap_restart.classList.add('keycap_down');
+		case "KeyQ":
+			control_gameKeysCheat[0] = true;
+			break;
+		case "KeyT":
+			control_gameKeysCheat[1] = true;
+			break;
+		case "KeyP":
+			control_gameKeysCheat[2] = true;
+			break;
+		case "ShiftLeft":
+			control_gameKeysCheat[3] = true;
+			break;
+		case "ShiftRight":
+			control_gameKeysCheat[4] = true;
+			break;
+		case "Slash":
+			control_gameKeysCheat[5] = true;
+			break;
 	}
 }
 
@@ -100,5 +123,33 @@ function control_keyHandlerUp(event, gameKeyListenerUp) {
 			keycap_restart.classList.remove('keycap_down');
 			keycap_restart.classList.add('keycap_up');
 			break;
+		case "KeyQ":
+			control_gameKeysCheat[0] = false;
+			break;
+		case "KeyT":
+			control_gameKeysCheat[1] = false;
+			break;
+		case "KeyP":
+			control_gameKeysCheat[2] = false;
+			break;
+		case "ShiftLeft":
+			control_gameKeysCheat[3] = false;
+			break;
+		case "ShiftRight":
+			control_gameKeysCheat[4] = false;
+			break;
+		case "Slash":
+			control_gameKeysCheat[5] = false;
+			break;
 	}
+}
+
+function control_setMouseListener() {
+	graphics_canvasChara.addEventListener("mouseup", function gameMouseListenerUp(event) {
+		if (control_gameKeysCheat[1] && control_gameKeysCheat[2]) {
+			if (!physics_charaKilled) {
+				control_charaTeleportation = [event.offsetX, event.offsetY];
+			}
+		}
+	});
 }

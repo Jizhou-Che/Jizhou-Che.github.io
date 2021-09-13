@@ -122,7 +122,7 @@ function loadGame() {
 	let gameInstructionsHeight = 50;
 	if (gameWindow.clientWidth < gameConfig_minWidth || gameWindow.clientHeight < gameConfig_minHeight + gameInstructionsHeight) {
 		let gameInstruction1 = document.createElement("span");
-		gameInstruction1.innerHTML = "<pre>You found something, but your window is too small to display it.</pre>";
+		gameInstruction1.innerHTML = "<pre>You found something, but your browser window is too small to display it.</pre>";
 		let gameInstruction2 = document.createElement("span");
 		gameInstruction2.innerHTML = "<pre>Press ESC to quit.</pre>";
 		gameWindow.appendChild(gameInstruction1);
@@ -185,8 +185,9 @@ function loadGame() {
 		graphics_canvasChara.style.left = "0px";
 		gameBackground.appendChild(graphics_canvasChara);
 		
-		// Set key event listeners.
+		// Set event listeners.
 		control_setKeyListener();
+		control_setMouseListener();
 		
 		// Start game.
 		control_restartGame();
