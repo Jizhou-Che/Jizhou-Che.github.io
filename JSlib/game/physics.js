@@ -23,18 +23,14 @@ function physics_start(chara) {
 	// Initialise Chara.
 	let charaPositionOld = graphics_resetChara(chara.spawnPosition);
 	let charaPositionNew = charaPositionOld.slice();
-	let blockSize = graphics_canvasBlocks.width / gameConfig_numBlocksX;
-	let charaSizeX = gameConfig_charaSizeX * blockSize;
-	let charaSizeY = gameConfig_charaSizeY * blockSize;
-	let charaSpeedX = gameConfig_speedX * blockSize;
+	let charaSpeedX = gameConfig_speedX * graphics_blockSize;
 	let charaSpeedY = 0;
-	let charaGravity = gameConfig_gravity * blockSize;
-	let charaJump1InitSpeedY = gameConfig_jump1InitSpeedY * blockSize;
-	let charaJump2InitSpeedY = gameConfig_jump2InitSpeedY * blockSize;
+	let charaGravity = gameConfig_gravity * graphics_blockSize;
+	let charaJump1InitSpeedY = gameConfig_jump1InitSpeedY * graphics_blockSize;
+	let charaJump2InitSpeedY = gameConfig_jump2InitSpeedY * graphics_blockSize;
 	let charaJumpStatus = 2;
 	let charaLastJumpKey = false;
 	let charaLastKillKey = false;
-	let charaDeathProgress = 0;
 	physics_charaKilled = false;
 	
 	// Request animation frame.
@@ -47,9 +43,12 @@ function physics_start(chara) {
 			frameDiff = frameNumber - lastFrameNumber;
 			
 			if (!physics_charaKilled) {
+				// Suicide check.
 				if (charaLastKillKey && !control_gameKeysCheat[0]) {
 					// Chara blew up.
 					physics_charaKilled = true;
+					graphics_clearChara();
+					graphics_registerCharaDeathAnimation(charaPositionNew);
 					media_muteMusic("music_background");
 					media_playSound("sound_death");
 					media_playMusic("music_death", false);
@@ -58,12 +57,12 @@ function physics_start(chara) {
 			}
 			
 			if (!physics_charaKilled) {
-				// Chara teleportation.
+				// Teleportation check.
 				let charaTeleported = false;
 				if (control_charaTeleportation) {
 					let charaTeleportationAllowed = true;
-					charaPositionNew = [control_charaTeleportation[0] - charaSizeX / 2, control_charaTeleportation[1] - charaSizeY / 2];
-					let charaCollision = blocksContext.getImageData(charaPositionNew[0], charaPositionNew[1], charaSizeX, charaSizeY);
+					charaPositionNew = [control_charaTeleportation[0] - graphics_charaSizeX / 2, control_charaTeleportation[1] - graphics_charaSizeY / 2];
+					let charaCollision = blocksContext.getImageData(charaPositionNew[0], charaPositionNew[1], graphics_charaSizeX, graphics_charaSizeY);
 					for (let i = 3; i < charaCollision.data.length; i += 4) {
 						if (charaCollision.data[i] != 0) {
 							charaTeleportationAllowed = false;
@@ -72,11 +71,11 @@ function physics_start(chara) {
 					}
 					if (charaTeleportationAllowed) {
 						// TODO: Play sound effect.
-						// TODO: Add animation.
+						graphics_registerCharaTeleportationSuccessAnimation(charaPositionNew);
 						charaTeleported = true;
 					} else {
 						// TODO: Play sound effect.
-						// TODO: Add animation.
+						graphics_registerCharaTeleportationFailureAnimation(charaPositionNew);
 						charaPositionNew = charaPositionOld.slice();
 					}
 					control_charaTeleportation = null;
@@ -84,6 +83,7 @@ function physics_start(chara) {
 					charaPositionNew = charaPositionOld.slice();
 				}
 				
+				// Movement check.
 				if (!charaTeleported) {
 					// Chara horizontal movement.
 					if (control_gameKeys[1]) {
@@ -97,9 +97,9 @@ function physics_start(chara) {
 					// Chara vertical movement.
 					let charaStepX1 = Math.floor(charaPositionOld[0]);
 					charaStepX1 = Math.min(Math.max(charaStepX1, 0), blocksImageData.width);
-					let charaStepX2 = Math.ceil(charaPositionOld[0] + charaSizeX);
+					let charaStepX2 = Math.ceil(charaPositionOld[0] + graphics_charaSizeX);
 					charaStepX2 = Math.min(Math.max(charaStepX2, 0), blocksImageData.width);
-					let charaStepY = Math.ceil(charaPositionOld[1] + charaSizeY);
+					let charaStepY = Math.ceil(charaPositionOld[1] + graphics_charaSizeY);
 					let charaBottomTouch = [];
 					if (charaStepY >= 0 && charaStepY < blocksImageData.height) {
 						charaBottomTouch = blocksPixels[charaStepY].slice(charaStepX1, charaStepX2);
@@ -170,7 +170,7 @@ function physics_start(chara) {
 							}
 							// Boundary tolerence.
 							let rangeX1 = Math.floor(charaPositionTracker[0]);
-							let rangeX2 = Math.ceil(charaPositionTracker[0] + charaSizeX);
+							let rangeX2 = Math.ceil(charaPositionTracker[0] + graphics_charaSizeX);
 							if (charaMovementUnitX < 0) {
 								rangeX1 += 1;
 							}
@@ -180,7 +180,7 @@ function physics_start(chara) {
 							}
 							rangeX2 = Math.min(Math.max(rangeX2, 0), blocksImageData.width);
 							let rangeY1 = Math.floor(charaPositionTracker[1]);
-							let rangeY2 = Math.ceil(charaPositionTracker[1] + charaSizeY);
+							let rangeY2 = Math.ceil(charaPositionTracker[1] + graphics_charaSizeY);
 							if (charaMovementUnitY < 0) {
 								rangeY1 += 1;
 							}
@@ -205,7 +205,7 @@ function physics_start(chara) {
 								}
 							}
 							if (charaMovementUnitX > 0) {
-								let charaRightX = Math.ceil(charaPositionTracker[0] + charaSizeX) - 1;
+								let charaRightX = Math.ceil(charaPositionTracker[0] + graphics_charaSizeX) - 1;
 								let charaRightCollision = [];
 								if (charaRightX >= 0 && charaRightX < blocksImageData.width) {
 									charaRightCollision = blocksPixels.slice(rangeY1, rangeY2).map(a => a[charaRightX]);
@@ -214,7 +214,7 @@ function physics_start(chara) {
 									// Right collision.
 									charaCollidesRight = true;
 									charaMovementUnitX = 0;
-									charaPositionTracker[0] = Math.ceil(charaPositionTracker[0] + charaSizeX) - 1 - charaSizeX;
+									charaPositionTracker[0] = Math.ceil(charaPositionTracker[0] + graphics_charaSizeX) - 1 - graphics_charaSizeX;
 									charaPositionNew[0] = charaPositionTracker[0];
 								}
 							}
@@ -234,7 +234,7 @@ function physics_start(chara) {
 								}
 							}
 							if (charaMovementUnitY > 0) {
-								let charaBottomY = Math.ceil(charaPositionTracker[1] + charaSizeY) - 1;
+								let charaBottomY = Math.ceil(charaPositionTracker[1] + graphics_charaSizeY) - 1;
 								let charaBottomCollision = [];
 								if (charaBottomY >= 0 && charaBottomY < blocksImageData.height) {
 									charaBottomCollision = blocksPixels[charaBottomY].slice(rangeX1, rangeX2);
@@ -244,7 +244,7 @@ function physics_start(chara) {
 									charaCollidesBottom = true;
 									charaSpeedY = 0;
 									charaMovementUnitY = 0;
-									charaPositionTracker[1] = Math.ceil(charaPositionTracker[1] + charaSizeY) - 1 - charaSizeY;
+									charaPositionTracker[1] = Math.ceil(charaPositionTracker[1] + graphics_charaSizeY) - 1 - graphics_charaSizeY;
 									charaPositionNew[1] = charaPositionTracker[1];
 								}
 							}
@@ -254,29 +254,36 @@ function physics_start(chara) {
 				
 				// Death check.
 				if (!(control_gameKeysCheat[3] && control_gameKeysCheat[4] && control_gameKeysCheat[5])) {
-					let charaSpikeCollision = spikesContext.getImageData(charaPositionNew[0], charaPositionNew[1], charaSizeX, charaSizeY);
-					let charaTrapSpikeCollision = trapSpikesContext.getImageData(charaPositionNew[0], charaPositionNew[1], charaSizeX, charaSizeY);
+					control_invincibilityMode = false;
+					let charaSpikeCollision = spikesContext.getImageData(charaPositionNew[0], charaPositionNew[1], graphics_charaSizeX, graphics_charaSizeY);
+					let charaTrapSpikeCollision = trapSpikesContext.getImageData(charaPositionNew[0], charaPositionNew[1], graphics_charaSizeX, graphics_charaSizeY);
 					for (let i = 3; i < charaSpikeCollision.data.length; i += 4) {
 						if (charaSpikeCollision.data[i] != 0 || charaTrapSpikeCollision.data[i] != 0) {
 							// Chara was pricked to death.
 							physics_charaKilled = true;
+							graphics_clearChara();
+							graphics_registerCharaDeathAnimation(charaPositionNew);
 							media_muteMusic("music_background");
 							media_playSound("sound_death");
 							media_playMusic("music_death", false);
 							break;
 						}
 					}
+				} else {
+					control_invincibilityMode = true;
 				}
 				let charaLeftX = Math.floor(charaPositionNew[0]);
-				let charaRightX = Math.ceil(charaPositionNew[0] + charaSizeX) - 1;
+				let charaRightX = Math.ceil(charaPositionNew[0] + graphics_charaSizeX) - 1;
 				let charaTopY = Math.floor(charaPositionNew[1]);
-				let charaBottomY = Math.ceil(charaPositionNew[1] + charaSizeY) - 1;
+				let charaBottomY = Math.ceil(charaPositionNew[1] + graphics_charaSizeY) - 1;
 				if ((charaLeftX < 0 && charaRightX < 0) ||
 					(charaLeftX >= blocksImageData.width && charaRightX >= blocksImageData.width) ||
 					(charaTopY < 0 && charaBottomY < 0) ||
 					(charaTopY >= blocksImageData.height && charaBottomY >= blocksImageData.height)) {
 					// Chara fell out of the world.
 					physics_charaKilled = true;
+					graphics_clearChara();
+					graphics_registerCharaDeathAnimation(charaPositionNew);
 					media_muteMusic("music_background");
 					media_playSound("sound_death");
 					media_playMusic("music_death", false);
@@ -284,6 +291,8 @@ function physics_start(chara) {
 				if ((charaCollidesLeft && charaCollidesRight) || (charaCollidesTop && charaCollidesBottom)) {
 					// Chara suffocated in a wall.
 					physics_charaKilled = true;
+					graphics_clearChara();
+					graphics_registerCharaDeathAnimation(charaPositionNew);
 					media_muteMusic("music_background");
 					media_playSound("sound_death");
 					media_playMusic("music_death", false);
@@ -293,17 +302,14 @@ function physics_start(chara) {
 			// Update frame.
 			if (!physics_charaKilled) {
 				graphics_updateChara(charaPositionOld, charaPositionNew);
-			} else {
-				graphics_updateDeadChara(charaPositionNew, charaDeathProgress);
-				charaDeathProgress += 1 / 15 * frameDiff;
+				charaPositionOld = charaPositionNew;
 			}
-			charaPositionOld = charaPositionNew;
+			graphics_renderAnimations(frameDiff);
+			
 			lastFrameNumber = frameNumber;
 		}
 		
-		if (charaDeathProgress < 1) {
-			physics_frame = requestAnimationFrame(renderFrame);
-		}
+		physics_frame = requestAnimationFrame(renderFrame);
 	});
 }
 
