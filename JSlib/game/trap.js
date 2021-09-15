@@ -22,8 +22,21 @@ function trap_addBlock(blocksPixels, size, position) {
 	}
 }
 
+function trap_removeBlock(blocksPixels, size, position) {
+	graphics_removeBlock(size, position);
+	for (let i = Math.floor(position[0] * graphics_blockSize); i < (position[0] + size) * graphics_blockSize; i++) {
+		for (let j = Math.floor(position[1] * graphics_blockSize); j < (position[1] + size) * graphics_blockSize; j++) {
+			blocksPixels[i][j] = false;
+		}
+	}
+}
+
 function trap_addSpike(type, size, position) {
 	graphics_drawSpike(graphics_canvasSpikes, type, size, position);
+}
+
+function trap_removeSpike(size, position) {
+	graphics_removeSpike(graphics_canvasSpikes, size, position);
 }
 
 function trap_addMovingSpikeLinear(type, size, startPosition, endPosition, numFrames) {

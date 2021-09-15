@@ -64,6 +64,11 @@ function graphics_drawSpike(canvas, type, size, position) {
 	context.fill();
 }
 
+function graphics_removeSpike(canvas, size, position) {
+	let context = canvas.getContext('2d');
+	context.clearRect(position[1] * graphics_blockSize, position[0] * graphics_blockSize, graphics_blockSize * size, graphics_blockSize * size);
+}
+
 function graphics_clearTrapSpikes() {
 	let context = graphics_canvasTrapSpikes.getContext('2d');
 	context.clearRect(0, 0, graphics_canvasTrapSpikes.width, graphics_canvasTrapSpikes.height);
@@ -90,6 +95,11 @@ function graphics_drawBlock(size, position) {
 	let blockBorder = Math.ceil(graphics_blockSize * size / 10);
 	context.fillStyle = 'black';
 	context.fillRect(position[1] * graphics_blockSize + blockBorder, position[0] * graphics_blockSize + blockBorder, graphics_blockSize * size - blockBorder * 2, graphics_blockSize * size - blockBorder * 2);
+}
+
+function graphics_removeBlock(size, position) {
+	let context = graphics_canvasBlocks.getContext('2d');
+	context.clearRect(position[1] * graphics_blockSize, position[0] * graphics_blockSize, graphics_blockSize * size, graphics_blockSize * size);
 }
 
 function graphics_resetChara(position) {

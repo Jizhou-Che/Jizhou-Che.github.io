@@ -140,7 +140,7 @@ function physics_start(chara) {
 				}
 				
 				// Fire triggers.
-				trigger_fireTriggers(charaPositionNew, blocksPixels, frameDiff);
+				trigger_fireTriggers(charaPositionOld, charaPositionNew, blocksPixels, frameDiff);
 				
 				// Update trap spikes.
 				trap_updateTrapSpikes(frameDiff);
