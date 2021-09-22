@@ -1,7 +1,7 @@
 let trigger_triggerList = null;
 
 function trigger_resetTriggers(triggers) {
-	trigger_triggerList = triggers;
+	trigger_triggerList = triggers.slice();
 	for (let trigger in trigger_triggerList) {
 		trigger_triggerList[trigger].stage = 0;
 		trigger_triggerList[trigger].progress = 0;

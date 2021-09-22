@@ -111,6 +111,8 @@ function control_restartGame() {
 	media_stopMusicSoft();
 	media_loadAudio(game1_mediaFiles);
 	graphics_resetMap(game1_map);
+	graphics_resetAnimations();
+	graphics_registerSavePointsAnimation(game1_chara);
 	trigger_resetTriggers(game1_triggers);
 	trap_resetTraps();
 	physics_start(game1_chara);
@@ -200,6 +202,7 @@ function control_keyHandlerUp(event, gameKeyListenerUp) {
 		case "Escape":
 			document.removeEventListener("keyup", gameKeyListenerUp);
 			media_stopMusicHard();
+			physics_stop();
 			control_gameWindow.parentNode.removeChild(control_gameWindow);
 			break;
 		case "KeyZ":

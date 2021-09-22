@@ -102,6 +102,15 @@ function graphics_removeBlock(size, position) {
 	context.clearRect(position[1] * graphics_blockSize, position[0] * graphics_blockSize, graphics_blockSize * size, graphics_blockSize * size);
 }
 
+function graphics_drawSave(position) {
+	let pixelPosition = [position[1] * graphics_blockSize, position[0] * graphics_blockSize];
+	let context = graphics_canvasAnimations.getContext('2d');
+	context.fillStyle = 'green';
+	context.beginPath();
+	context.arc(pixelPosition[0] + graphics_blockSize / 2, pixelPosition[1] + graphics_blockSize / 2, graphics_blockSize / 3, 0, Math.PI * 2, true);
+	context.fill();
+}
+
 function graphics_resetChara(position) {
 	let charaPositionX = position[1] * graphics_blockSize + (graphics_blockSize - graphics_charaSizeX) / 2;
 	let charaPositionY = position[0] * graphics_blockSize + (graphics_blockSize - graphics_charaSizeY) / 2;
@@ -126,6 +135,18 @@ function graphics_clearChara() {
 	context.clearRect(0, 0, graphics_canvasChara.width, graphics_canvasChara.height);
 }
 
+function graphics_resetAnimations() {
+	for (let animationID in graphics_animationList) {
+		if (graphics_animationList[animationID].id != "chara_death" &&
+			graphics_animationList[animationID].id != "chara_teleportation_success" &&
+			graphics_animationList[animationID].id != "chara_teleportation_failure" &&
+			graphics_animationList[animationID].id != "invincibility_indicator" &&
+			graphics_animationList[animationID].id != "teleportation_indicator") {
+			graphics_animationList.splice(animationID, 1);
+		}
+	}
+}
+
 function graphics_renderAnimations(frameDiff) {
 	let context = graphics_canvasAnimations.getContext('2d');
 	context.clearRect(0, 0, graphics_canvasAnimations.width, graphics_canvasAnimations.height);
@@ -143,7 +164,7 @@ function graphics_registerAnimation(animation) {
 function graphics_registerCharaDeathAnimation(position) {
 	let numFrames = 15;
 	graphics_animationList.push({
-		id: graphics_animationList.length,
+		id: "chara_death",
 		complete: false,
 		currentFrame: 0,
 		render: function(frameDiff) {
@@ -164,7 +185,7 @@ function graphics_registerCharaTeleportationSuccessAnimation(position) {
 	let numFrames = 15;
 	let maxRadius = graphics_blockSize * 2;
 	graphics_animationList.push({
-		id: graphics_animationList.length,
+		id: "chara_teleportation_success",
 		complete: false,
 		currentFrame: 0,
 		render: function(frameDiff) {
@@ -186,7 +207,7 @@ function graphics_registerCharaTeleportationSuccessAnimation(position) {
 function graphics_registerCharaTeleportationFailureAnimation(position) {
 	let numFrames = 15;
 	graphics_animationList.push({
-		id: graphics_animationList.length,
+		id: "chara_teleportation_failure",
 		complete: false,
 		currentFrame: 0,
 		render: function(frameDiff) {
@@ -213,11 +234,11 @@ function graphics_registerCharaTeleportationFailureAnimation(position) {
 function graphics_registerInvincibilityIndicatorAnimation() {
 	let fontSize = graphics_charaSizeX;
 	graphics_animationList.push({
-		id: graphics_animationList.length,
+		id: "invincibility_indicator",
 		render: function(frameDiff) {
 			if (control_invincibilityMode) {
 				let context = graphics_canvasAnimations.getContext('2d');
-				context.fillStyle = 'rgba(0, 255, 0, 1)';
+				context.fillStyle = 'rgba(255, 0, 255, 1)';
 				context.font = fontSize + 'px monospace';
 				context.fillText("[INVINCIBILITY]", graphics_canvasAnimations.width - fontSize * 10, fontSize * 2);
 			}
@@ -228,13 +249,26 @@ function graphics_registerInvincibilityIndicatorAnimation() {
 function graphics_registerTeleportationIndicatorAnimation() {
 	let fontSize = graphics_charaSizeX;
 	graphics_animationList.push({
-		id: graphics_animationList.length,
+		id: "teleportation_indicator",
 		render: function(frameDiff) {
 			if (control_teleportationMode) {
 				let context = graphics_canvasAnimations.getContext('2d');
-				context.fillStyle = 'rgba(0, 255, 0, 1)';
+				context.fillStyle = 'rgba(255, 0, 255, 1)';
 				context.font = fontSize + 'px monospace';
 				context.fillText("[TELEPORTATION]", graphics_canvasAnimations.width - fontSize * 10, fontSize * 3.5);
+			}
+		}
+	});
+}
+
+function graphics_registerSavePointsAnimation(chara) {
+	graphics_animationList.push({
+		id: "save_points",
+		render: function(frameDiff) {
+			for (let savePointID in chara.savePoints) {
+				if (chara.savePoints[savePointID][0] != chara.spawnPosition[0] || chara.savePoints[savePointID][1] != chara.spawnPosition[1]) {
+					graphics_drawSave(chara.savePoints[savePointID]);
+				}
 			}
 		}
 	});
