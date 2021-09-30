@@ -7,13 +7,107 @@ let graphics_canvasAnimations = null;
 let graphics_animationList = [];
 
 let graphics_blockSize = null;
+let graphics_sizeScale = null;
 let graphics_charaSizeX = null;
 let graphics_charaSizeY = null;
 
+let graphics_spriteCharaIdleRight1 = null;
+let graphics_spriteCharaIdleRight2 = null;
+let graphics_spriteCharaIdleRight3 = null;
+let graphics_spriteCharaIdleRight4 = null;
+let graphics_spriteCharaRunningRight1 = null;
+let graphics_spriteCharaRunningRight2 = null;
+let graphics_spriteCharaRunningRight3 = null;
+let graphics_spriteCharaRunningRight4 = null;
+let graphics_spriteCharaJumpRight1 = null;
+let graphics_spriteCharaJumpRight2 = null;
+let graphics_spriteCharaFallRight1 = null;
+let graphics_spriteCharaFallRight2 = null;
+let graphics_spriteCharaIdleLeft1 = null;
+let graphics_spriteCharaIdleLeft2 = null;
+let graphics_spriteCharaIdleLeft3 = null;
+let graphics_spriteCharaIdleLeft4 = null;
+let graphics_spriteCharaRunningLeft1 = null;
+let graphics_spriteCharaRunningLeft2 = null;
+let graphics_spriteCharaRunningLeft3 = null;
+let graphics_spriteCharaRunningLeft4 = null;
+let graphics_spriteCharaJumpLeft1 = null;
+let graphics_spriteCharaJumpLeft2 = null;
+let graphics_spriteCharaFallLeft1 = null;
+let graphics_spriteCharaFallLeft2 = null;
+let graphics_spriteCharaDeath = null;
+
+let graphics_charaSpriteStatus = {
+	// Direction: unchanged, right, left.
+	direction: 1,
+	// Status: unchanged, idle, running, jump, fall.
+	status: 1,
+	// Lifespan: number of frames before switching to the next alternate sprite.
+	lifespan: 6,
+	// Frame: current frame in lifespan.
+	frame: 0,
+	// Sprite: current sprite.
+	sprite: null
+};
+
 function graphics_setSizeParameters() {
 	graphics_blockSize = graphics_canvasBlocks.width / gameConfig_numBlocksX;
+	graphics_sizeScale = graphics_blockSize / gameConfig_iwBlockSize;
 	graphics_charaSizeX = gameConfig_charaSizeX * graphics_blockSize;
 	graphics_charaSizeY = gameConfig_charaSizeY * graphics_blockSize;
+}
+
+function graphics_loadSprites() {
+	graphics_spriteCharaIdleRight1 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaIdleRight1.src = "Resources/Sprite/charaIdleRight1.png";
+	graphics_spriteCharaIdleRight2 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaIdleRight2.src = "Resources/Sprite/charaIdleRight2.png";
+	graphics_spriteCharaIdleRight3 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaIdleRight3.src = "Resources/Sprite/charaIdleRight3.png";
+	graphics_spriteCharaIdleRight4 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaIdleRight4.src = "Resources/Sprite/charaIdleRight4.png";
+	graphics_spriteCharaRunningRight1 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaRunningRight1.src = "Resources/Sprite/charaRunningRight1.png";
+	graphics_spriteCharaRunningRight2 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaRunningRight2.src = "Resources/Sprite/charaRunningRight2.png";
+	graphics_spriteCharaRunningRight3 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaRunningRight3.src = "Resources/Sprite/charaRunningRight3.png";
+	graphics_spriteCharaRunningRight4 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaRunningRight4.src = "Resources/Sprite/charaRunningRight4.png";
+	graphics_spriteCharaJumpRight1 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaJumpRight1.src = "Resources/Sprite/charaJumpRight1.png";
+	graphics_spriteCharaJumpRight2 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaJumpRight2.src = "Resources/Sprite/charaJumpRight2.png";
+	graphics_spriteCharaFallRight1 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaFallRight1.src = "Resources/Sprite/charaFallRight1.png";
+	graphics_spriteCharaFallRight2 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaFallRight2.src = "Resources/Sprite/charaFallRight2.png";
+	graphics_spriteCharaIdleLeft1 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaIdleLeft1.src = "Resources/Sprite/charaIdleLeft1.png";
+	graphics_spriteCharaIdleLeft2 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaIdleLeft2.src = "Resources/Sprite/charaIdleLeft2.png";
+	graphics_spriteCharaIdleLeft3 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaIdleLeft3.src = "Resources/Sprite/charaIdleLeft3.png";
+	graphics_spriteCharaIdleLeft4 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaIdleLeft4.src = "Resources/Sprite/charaIdleLeft4.png";
+	graphics_spriteCharaRunningLeft1 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaRunningLeft1.src = "Resources/Sprite/charaRunningLeft1.png";
+	graphics_spriteCharaRunningLeft2 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaRunningLeft2.src = "Resources/Sprite/charaRunningLeft2.png";
+	graphics_spriteCharaRunningLeft3 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaRunningLeft3.src = "Resources/Sprite/charaRunningLeft3.png";
+	graphics_spriteCharaRunningLeft4 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaRunningLeft4.src = "Resources/Sprite/charaRunningLeft4.png";
+	graphics_spriteCharaJumpLeft1 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaJumpLeft1.src = "Resources/Sprite/charaJumpLeft1.png";
+	graphics_spriteCharaJumpLeft2 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaJumpLeft2.src = "Resources/Sprite/charaJumpLeft2.png";
+	graphics_spriteCharaFallLeft1 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaFallLeft1.src = "Resources/Sprite/charaFallLeft1.png";
+	graphics_spriteCharaFallLeft2 = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaFallLeft2.src = "Resources/Sprite/charaFallLeft2.png";
+	graphics_spriteCharaDeath = new Image(graphics_blockSize, graphics_blockSize);
+	graphics_spriteCharaDeath.src = "Resources/Sprite/charaDeath.png";
 }
 
 function graphics_resetMap(map) {
@@ -112,22 +206,222 @@ function graphics_drawSave(position) {
 }
 
 function graphics_resetChara(position) {
+	graphics_charaSpriteStatus.direction = 1;
+	graphics_charaSpriteStatus.status = 1;
+	graphics_charaSpriteStatus.frame = 0;
+	graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleRight1;
 	let charaPositionX = position[1] * graphics_blockSize + (graphics_blockSize - graphics_charaSizeX) / 2;
 	let charaPositionY = position[0] * graphics_blockSize + (graphics_blockSize - graphics_charaSizeY) / 2;
 	let context = graphics_canvasChara.getContext('2d');
 	context.fillStyle = 'yellow';
 	context.clearRect(0, 0, graphics_canvasChara.width, graphics_canvasChara.height);
-	context.fillRect(charaPositionX, charaPositionY, graphics_charaSizeX, graphics_charaSizeY);
+	context.drawImage(graphics_charaSpriteStatus.sprite, charaPositionX - 10 * graphics_sizeScale, charaPositionY - 5 * graphics_sizeScale, graphics_charaSpriteStatus.sprite.width, graphics_charaSpriteStatus.sprite.height);
 	return [charaPositionX, charaPositionY];
 }
 
-function graphics_updateChara(positionOld, positionNew) {
-	if (positionOld[0] != positionNew[0] || positionOld[1] != positionNew[1]) {
-		let context = graphics_canvasChara.getContext('2d');
-		context.fillStyle = 'yellow';
-		context.clearRect(positionOld[0] - 1, positionOld[1] - 1, graphics_charaSizeX + 2, graphics_charaSizeY + 2);
-		context.fillRect(positionNew[0], positionNew[1], graphics_charaSizeX, graphics_charaSizeY);
+function graphics_updateChara(positionOld, positionNew, frameDiff) {
+	let direction = 0;
+	if (positionNew[0] > positionOld[0]) {
+		// Direction: right.
+		direction = 1;
+	} else if (positionNew[0] < positionOld[0]) {
+		// Direction: left.
+		direction = 2;
 	}
+	
+	let status = 0;
+	if (positionNew[1] < positionOld[1]) {
+		// Status: jump.
+		status = 3;
+	} else if (positionNew[1] > positionOld[1]) {
+		// Status: fall.
+		status = 4;
+	} else {
+		if (direction == 0) {
+			// Status: idle.
+			status = 1;
+		} else {
+			// Status: running.
+			status = 2;
+		}
+	}
+	
+	if (direction == graphics_charaSpriteStatus.direction) {
+		// Direction: unchanged.
+		direction = 0;
+	}
+	if (status == graphics_charaSpriteStatus.status) {
+		// Status: unchanged.
+		status = 0;
+	}
+	
+	if (direction != 0 || status != 0) {
+		if (direction != 0) {
+			graphics_charaSpriteStatus.direction = direction;
+		}
+		if (status != 0) {
+			graphics_charaSpriteStatus.status = status;
+		}
+		graphics_charaSpriteStatus.frame = 0;
+		switch (graphics_charaSpriteStatus.direction) {
+			case 1:
+				switch (graphics_charaSpriteStatus.status) {
+					case 1:
+						graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleRight1;
+						break;
+					case 2:
+						graphics_charaSpriteStatus.sprite = graphics_spriteCharaRunningRight1;
+						break;
+					case 3:
+						graphics_charaSpriteStatus.sprite = graphics_spriteCharaJumpRight1;
+						break;
+					case 4:
+						graphics_charaSpriteStatus.sprite = graphics_spriteCharaFallRight1;
+						break;
+				}
+				break;
+			case 2:
+				switch (graphics_charaSpriteStatus.status) {
+					case 1:
+						graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleLeft1;
+						break;
+					case 2:
+						graphics_charaSpriteStatus.sprite = graphics_spriteCharaRunningLeft1;
+						break;
+					case 3:
+						graphics_charaSpriteStatus.sprite = graphics_spriteCharaJumpLeft1;
+						break;
+					case 4:
+						graphics_charaSpriteStatus.sprite = graphics_spriteCharaFallLeft1;
+						break;
+				}
+				break;
+		}
+	} else {
+		graphics_charaSpriteStatus.frame += frameDiff;
+		if (graphics_charaSpriteStatus.frame > graphics_charaSpriteStatus.lifespan) {
+			graphics_charaSpriteStatus.frame %= graphics_charaSpriteStatus.lifespan;
+			// Switch to next alternate sprite.
+			switch (graphics_charaSpriteStatus.direction) {
+				case 1:
+					switch (graphics_charaSpriteStatus.status) {
+						case 1:
+							switch (graphics_charaSpriteStatus.sprite) {
+								case graphics_spriteCharaIdleRight1:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleRight2;
+									break;
+								case graphics_spriteCharaIdleRight2:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleRight3;
+									break;
+								case graphics_spriteCharaIdleRight3:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleRight4;
+									break;
+								case graphics_spriteCharaIdleRight4:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleRight1;
+									break;
+							}
+							break;
+						case 2:
+							switch (graphics_charaSpriteStatus.sprite) {
+								case graphics_spriteCharaRunningRight1:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaRunningRight2;
+									break;
+								case graphics_spriteCharaRunningRight2:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaRunningRight3;
+									break;
+								case graphics_spriteCharaRunningRight3:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaRunningRight4;
+									break;
+								case graphics_spriteCharaRunningRight4:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaRunningRight1;
+									break;
+							}
+							break;
+						case 3:
+							switch (graphics_charaSpriteStatus.sprite) {
+								case graphics_spriteCharaJumpRight1:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaJumpRight2;
+									break;
+								case graphics_spriteCharaJumpRight2:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaJumpRight1;
+									break;
+							}
+							break;
+						case 4:
+							switch (graphics_charaSpriteStatus.sprite) {
+								case graphics_spriteCharaFallRight1:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaFallRight2;
+									break;
+								case graphics_spriteCharaFallRight2:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaFallRight1;
+									break;
+							}
+							break;
+					}
+					break;
+				case 2:
+					switch (graphics_charaSpriteStatus.status) {
+						case 1:
+							switch (graphics_charaSpriteStatus.sprite) {
+								case graphics_spriteCharaIdleLeft1:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleLeft2;
+									break;
+								case graphics_spriteCharaIdleLeft2:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleLeft3;
+									break;
+								case graphics_spriteCharaIdleLeft3:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleLeft4;
+									break;
+								case graphics_spriteCharaIdleLeft4:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaIdleLeft1;
+									break;
+							}
+							break;
+						case 2:
+							switch (graphics_charaSpriteStatus.sprite) {
+								case graphics_spriteCharaRunningLeft1:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaRunningLeft2;
+									break;
+								case graphics_spriteCharaRunningLeft2:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaRunningLeft3;
+									break;
+								case graphics_spriteCharaRunningLeft3:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaRunningLeft4;
+									break;
+								case graphics_spriteCharaRunningLeft4:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaRunningLeft1;
+									break;
+							}
+							break;
+						case 3:
+							switch (graphics_charaSpriteStatus.sprite) {
+								case graphics_spriteCharaJumpLeft1:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaJumpLeft2;
+									break;
+								case graphics_spriteCharaJumpLeft2:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaJumpLeft1;
+									break;
+							}
+							break;
+						case 4:
+							switch (graphics_charaSpriteStatus.sprite) {
+								case graphics_spriteCharaFallLeft1:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaFallLeft2;
+									break;
+								case graphics_spriteCharaFallLeft2:
+									graphics_charaSpriteStatus.sprite = graphics_spriteCharaFallLeft1;
+									break;
+							}
+							break;
+					}
+					break;
+			}
+		}
+	}
+	
+	let context = graphics_canvasChara.getContext('2d');
+	context.clearRect(positionOld[0] - 10 * graphics_sizeScale - 1, positionOld[1] - 5 * graphics_sizeScale - 1, graphics_blockSize + 2, graphics_blockSize + 2);
+	context.drawImage(graphics_charaSpriteStatus.sprite, positionNew[0] - 10 * graphics_sizeScale, positionNew[1] - 5 * graphics_sizeScale, graphics_charaSpriteStatus.sprite.width, graphics_charaSpriteStatus.sprite.height);
 }
 
 function graphics_clearChara() {

@@ -91,6 +91,9 @@ function control_createGame(gameWindow) {
 		// Set graphics parameters.
 		graphics_setSizeParameters();
 		
+		// Load sprites.
+		graphics_loadSprites();
+		
 		// Set event listeners.
 		control_setKeyListener();
 		control_setMouseListener();

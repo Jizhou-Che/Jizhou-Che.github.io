@@ -301,7 +301,7 @@ function physics_start(chara) {
 			
 			// Update frame.
 			if (!physics_charaKilled) {
-				graphics_updateChara(charaPositionOld, charaPositionNew);
+				graphics_updateChara(charaPositionOld, charaPositionNew, frameDiff);
 				charaPositionOld = charaPositionNew;
 			}
 			graphics_renderAnimations(frameDiff);
